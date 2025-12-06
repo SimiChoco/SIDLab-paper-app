@@ -43,8 +43,8 @@ export default async function ThesisProgress() {
       <div className="max-w-5xl mx-auto space-y-12">
         {/* Header Section */}
         <header className="text-center space-y-6">
-          <h1 className="text-4xl md:text-6xl font-black text-[#db2777] drop-shadow-sm tracking-tight transform -rotate-1">
-            Thesis Progress
+          <h1 className="text-4xl md:text-6xl font-black text-[#db2777] drop-shadow-sm tracking-tight transform">
+            卒論/修論 執筆進捗サイト
           </h1>
           <p className="text-xl md:text-2xl text-[#be185d] font-bold">
             Let's finish that paper! 🎓
