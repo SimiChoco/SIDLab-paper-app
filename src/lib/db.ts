@@ -17,10 +17,11 @@ import {
     deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
+export { db };
 import { User, ReadingLog } from "./types";
 
-const USERS_COLLECTION = "users";
-const LOGS_COLLECTION = "logs";
+export const USERS_COLLECTION = "users";
+export const LOGS_COLLECTION = "logs";
 
 export async function getLogById(logId: string): Promise<ReadingLog | null> {
     const docRef = doc(db, LOGS_COLLECTION, logId);
