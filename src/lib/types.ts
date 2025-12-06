@@ -10,6 +10,5 @@ export interface ReadingLog {
     userId: string;
     userName: string;
     pages: number;
-    paperTitle: string;
     createdAt: Date;
 }

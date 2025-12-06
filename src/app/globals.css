@@ -20,7 +20,9 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: #fdf2f8;
+  /* Pink-50ish for Pop feel */
+  color: #374151;
+  /* Gray-700 */
+  font-family: 'M PLUS Rounded 1c', 'Fredoka One', sans-serif;
 }

@@ -12,7 +12,9 @@ import {
     Timestamp,
     getDoc,
     setDoc,
-    where
+    where,
+    runTransaction,
+    deleteDoc
 } from "firebase/firestore";
 import { db } from "./firebase";
 import { User, ReadingLog } from "./types";
@@ -20,49 +22,125 @@ import { User, ReadingLog } from "./types";
 const USERS_COLLECTION = "users";
 const LOGS_COLLECTION = "logs";
 
-// Add a reading log and update user's total pages
-export async function addReadingLog(name: string, pages: number, paperTitle: string) {
-    // 1. Check if user exists, create if not
-    // For simplicity using name as identifier or part of query. 
-    // Ideally we use Auth, but per plan we use name.
-    // We'll search for a user with this name (case insensitive ideally, but exact for now)
+export async function getLogById(logId: string): Promise<ReadingLog | null> {
+    const docRef = doc(db, LOGS_COLLECTION, logId);
+    const docSnap = await getDoc(docRef);
 
+    if (docSnap.exists()) {
+        const data = docSnap.data();
+        return {
+            id: docSnap.id,
+            userId: data.userId,
+            userName: data.userName,
+            pages: data.pages,
+            paperTitle: data.paperTitle,
+            createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
+        } as ReadingLog;
+    } else {
+        return null;
+    }
+}
+
+export async function updateReadingLog(logId: string, newPages: number) {
+    try {
+        await runTransaction(db, async (transaction) => {
+            // 1. Get the log
+            const logRef = doc(db, LOGS_COLLECTION, logId);
+            const logDoc = await transaction.get(logRef);
+            if (!logDoc.exists()) {
+                throw new Error("Log not found!");
+            }
+
+            const logData = logDoc.data();
+            const oldPages = logData.pages;
+            const userId = logData.userId;
+            const pageDiff = newPages - oldPages;
+
+            // 2. Get the user
+            const userRef = doc(db, USERS_COLLECTION, userId);
+            const userDoc = await transaction.get(userRef);
+            if (!userDoc.exists()) {
+                throw new Error("User not found!");
+            }
+
+            // 3. Update Log
+            transaction.update(logRef, {
+                pages: newPages,
+            });
+
+            // 4. Update User Total
+            transaction.update(userRef, {
+                totalPages: increment(pageDiff),
+                updatedAt: serverTimestamp()
+            });
+        });
+        console.log("Transaction successfully committed!");
+    } catch (e) {
+        console.log("Transaction failed: ", e);
+        throw e;
+    }
+}
+
+// Create a new user
+export async function createUser(name: string) {
     const usersRef = collection(db, USERS_COLLECTION);
     const q = query(usersRef, where("name", "==", name));
     const querySnapshot = await getDocs(q);
 
-    let userId = "";
-    let currentTotal = 0;
-
-    if (querySnapshot.empty) {
-        // Create new user
-        const newUserRef = await addDoc(usersRef, {
-            name,
-            totalPages: 0,
-            updatedAt: serverTimestamp(),
-        });
-        userId = newUserRef.id;
-    } else {
-        const userDoc = querySnapshot.docs[0];
-        userId = userDoc.id;
-        currentTotal = userDoc.data().totalPages || 0;
+    if (!querySnapshot.empty) {
+        throw new Error("User already exists");
     }
 
-    // 2. Add Log
+    const newUserRef = await addDoc(usersRef, {
+        name,
+        totalPages: 0,
+        updatedAt: serverTimestamp(),
+    });
+    return newUserRef.id;
+}
+
+// Get all users for dropdown
+export async function getAllUsers() {
+    const usersRef = collection(db, USERS_COLLECTION);
+    const q = query(usersRef, orderBy("name"));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(doc => ({
+        id: doc.id,
+        name: doc.data().name,
+    }));
+}
+
+// Log progress (Absolute page count)
+export async function addReadingLog(userId: string, userName: string, currentTotalPages: number) {
+    // 1. Add Log (Recording the milestone reached)
     await addDoc(collection(db, LOGS_COLLECTION), {
         userId,
-        userName: name,
-        pages,
-        paperTitle,
+        userName,
+        pages: currentTotalPages, // NOW REPRESENTS "REACHED PAGE X"
         createdAt: serverTimestamp(),
     });
 
-    // 3. Update User Total
+    // 2. Update User Total (Set directly, no increment)
     const userRef = doc(db, USERS_COLLECTION, userId);
     await updateDoc(userRef, {
-        totalPages: increment(pages),
+        totalPages: currentTotalPages,
         updatedAt: serverTimestamp(),
     });
+}
+
+// Delete a user and their logs
+export async function deleteUser(userId: string) {
+    // 1. Delete all logs for this user (Ideally this should be a batch or cloud function, but doing simple query delete here)
+    const logsRef = collection(db, LOGS_COLLECTION);
+    const q = query(logsRef, where("userId", "==", userId));
+    const querySnapshot = await getDocs(q);
+
+    const deletePromises = querySnapshot.docs.map(doc => deleteDoc(doc.ref));
+    await Promise.all(deletePromises);
+
+    // 2. Delete the user
+    await deleteDoc(doc(db, USERS_COLLECTION, userId));
 }
 
 export async function getRanking() {
