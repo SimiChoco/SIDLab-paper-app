@@ -18,7 +18,8 @@ export default function RegisterPage() {
 
         try {
             await createUser(name);
-            router.push("/");
+            alert("Welcome to the Guild!");
+            window.location.href = "/"; // Force navigation
         } catch (error: any) {
             console.error("Error registering:", error);
             setError(error.message || "Failed to register.");

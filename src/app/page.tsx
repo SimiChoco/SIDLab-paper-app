@@ -10,10 +10,15 @@ async function getData() {
   const usersRef = collection(db, USERS_COLLECTION);
   const usersQ = query(usersRef, orderBy("totalPages", "desc"));
   const usersSnapshot = await getDocs(usersQ);
-  const ranking = usersSnapshot.docs.map(doc => ({
-    id: doc.id,
-    ...doc.data()
-  } as User));
+  const ranking = usersSnapshot.docs.map(doc => {
+    const data = doc.data();
+    return {
+      id: doc.id,
+      name: data.name,
+      totalPages: data.totalPages,
+      updatedAt: data.updatedAt?.toDate() || new Date(),
+    } as User;
+  });
 
   // 2. Get Recent Logs
   const logsRef = collection(db, LOGS_COLLECTION);
@@ -44,7 +49,7 @@ export default async function ThesisProgress() {
         {/* Header Section */}
         <header className="text-center space-y-6">
           <h1 className="text-4xl md:text-6xl font-black text-[#db2777] drop-shadow-sm tracking-tight transform">
-            卒論/修論 執筆進捗サイト
+            論文進捗管理君
           </h1>
           <p className="text-xl md:text-2xl text-[#be185d] font-bold">
             Let's finish that paper! 🎓

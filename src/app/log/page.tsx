@@ -120,7 +120,7 @@ export default function LogPage() {
                             value={pages}
                             onChange={(e) => setPages(e.target.value)}
                             className="w-full px-6 py-4 bg-[#f0f9ff] border-2 border-[#bae6fd] rounded-2xl focus:border-[#0284c7] focus:ring-0 text-gray-700 outline-none transition font-medium text-lg placeholder-gray-300"
-                            placeholder="e.g. 120"
+                            placeholder="10p"
                         />
                     </div>
 
