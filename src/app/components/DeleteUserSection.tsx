@@ -13,42 +13,46 @@ export default function DeleteUserSection({ users }: { users: User[] }) {
 
     async function handleDelete() {
         if (!selectedDeleteUserId) return;
-        if (!confirm("Are you sure? This will delete the user and all their logs forever.")) return;
+        if (!confirm("本当にこのユーザーを削除しますか？この操作は取り消せません。")) return;
 
         setIsDeleting(true);
         try {
             await deleteUser(selectedDeleteUserId);
-            alert("User deleted.");
+            alert("削除しました。");
             setShowDeleteModal(false);
             setSelectedDeleteUserId("");
-            router.refresh(); // Refresh server component updates
+            router.refresh();
         } catch (error) {
             console.error(error);
-            alert("Failed to delete user.");
+            alert("削除に失敗しました。");
         } finally {
             setIsDeleting(false);
         }
     }
 
     return (
-        <div className="text-center pt-12 border-t-2 border-[#fbcfe8] mt-12 pb-8">
-            <button
-                onClick={() => setShowDeleteModal(!showDeleteModal)}
-                className="text-gray-400 hover:text-red-400 text-sm font-medium transition underline"
-            >
-                {showDeleteModal ? "Cancel Deletion" : "Delete User"}
-            </button>
+        <div className="pt-8 border-t border-gray-200 mt-8">
+            <div className="flex justify-center">
+                <button
+                    onClick={() => setShowDeleteModal(!showDeleteModal)}
+                    className="text-gray-400 hover:text-red-600 text-xs hover:underline transition"
+                >
+                    {showDeleteModal ? "キャンセル" : "ユーザー管理（削除）"}
+                </button>
+            </div>
 
             {showDeleteModal && (
-                <div className="mt-6 bg-white p-6 rounded-2xl border-2 border-gray-200 max-w-md mx-auto shadow-sm">
-                    <h3 className="text-red-500 font-bold mb-4">Danger Zone</h3>
+                <div className="mt-4 bg-white p-6 border border-gray-200 rounded-md max-w-md mx-auto shadow-sm">
+                    <h3 className="text-gray-800 font-bold mb-4 text-sm">
+                        ユーザー削除
+                    </h3>
                     <div className="flex gap-2">
                         <select
-                            className="flex-1 border p-2 rounded-lg bg-gray-50"
+                            className="flex-1 input-field text-sm"
                             value={selectedDeleteUserId}
                             onChange={(e) => setSelectedDeleteUserId(e.target.value)}
                         >
-                            <option value="">Select user to delete...</option>
+                            <option value="">ユーザーを選択...</option>
                             {users.map(u => (
                                 <option key={u.id} value={u.id}>{u.name}</option>
                             ))}
@@ -56,9 +60,9 @@ export default function DeleteUserSection({ users }: { users: User[] }) {
                         <button
                             onClick={handleDelete}
                             disabled={isDeleting || !selectedDeleteUserId}
-                            className="bg-red-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-red-600 disabled:opacity-50"
+                            className="bg-red-600 text-white px-4 py-2 rounded text-sm font-medium hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed whitespace-nowrap"
                         >
-                            {isDeleting ? "..." : "Delete"}
+                            {isDeleting ? "..." : "削除"}
                         </button>
                     </div>
                 </div>

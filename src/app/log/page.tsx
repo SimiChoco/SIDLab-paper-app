@@ -23,7 +23,7 @@ export default function LogPage() {
                 setUsers(u);
             } catch (err) {
                 console.error("Failed to fetch users", err);
-                setError("Failed to load members.");
+                setError("ユーザー情報の取得に失敗しました。");
             } finally {
                 setLoading(false);
             }
@@ -37,7 +37,7 @@ export default function LogPage() {
         setError(null);
 
         if (!selectedUserId) {
-            setError("Who are you?");
+            setError("ユーザーを選択してください。");
             setSubmitting(false);
             return;
         }
@@ -45,7 +45,7 @@ export default function LogPage() {
         try {
             const pageCount = parseInt(pages, 10);
             if (isNaN(pageCount) || pageCount < 0) {
-                alert("Please enter valid page number.");
+                alert("正しいページ数を入力してください。");
                 setSubmitting(false);
                 return;
             }
@@ -53,64 +53,55 @@ export default function LogPage() {
             const selectedUser = users.find(u => u.id === selectedUserId);
             if (!selectedUser) throw new Error("User mismatch");
 
-            // Logic updated to use absolute value (not increment)
             await addReadingLog(selectedUserId, selectedUser.name, pageCount);
             router.push(`/log/success?pages=${pageCount}`);
         } catch (error: any) {
             console.error("Error adding log:", error);
-            setError(error.message || "Failed to record.");
+            setError(error.message || "記録に失敗しました。");
         } finally {
             setSubmitting(false);
         }
     }
 
-    if (loading) return <div className="min-h-screen flex items-center justify-center text-[#f472b6] font-bold text-xl animate-pulse">Loading...</div>;
+    if (loading) return <div className="min-h-screen flex items-center justify-center text-gray-500">読み込み中...</div>;
 
     return (
-        <main className="min-h-screen p-6 flex flex-col items-center justify-center bg-[#f0f9ff]">
-            <div className="w-full max-w-md bg-white rounded-[2rem] border-4 border-[#bae6fd] p-8 space-y-8 shadow-xl">
-                <div className="text-center">
-                    <h1 className="text-2xl font-black text-[#0284c7]">
-                        Progress Log
+        <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+            <div className="w-full max-w-sm card p-6 bg-white">
+                <div className="text-center mb-6">
+                    <h1 className="text-xl font-bold text-gray-900">
+                        進捗を記録
                     </h1>
-                    <p className="text-gray-500 mt-2 font-medium">
-                        Update your thesis progress. 📈
-                    </p>
                 </div>
 
                 {error && (
-                    <div className="bg-red-50 text-red-500 p-4 rounded-xl text-sm font-bold border-2 border-red-100">
-                        🥺 {error}
+                    <div className="bg-red-50 text-red-600 p-3 rounded text-sm mb-4 border border-red-100">
+                        {error}
                     </div>
                 )}
 
-                <form onSubmit={handleSubmit} className="space-y-6">
+                <form onSubmit={handleSubmit} className="space-y-4">
                     <div>
-                        <label htmlFor="user" className="block text-sm font-bold text-gray-600 mb-2 ml-1">
-                            Select Your Name
+                        <label htmlFor="user" className="block text-sm font-medium text-gray-700 mb-1">
+                            ユーザー
                         </label>
-                        <div className="relative">
-                            <select
-                                id="user"
-                                required
-                                value={selectedUserId}
-                                onChange={(e) => setSelectedUserId(e.target.value)}
-                                className="w-full px-6 py-4 bg-[#f0f9ff] border-2 border-[#bae6fd] rounded-2xl focus:border-[#0284c7] focus:ring-0 text-gray-700 outline-none transition font-medium text-lg appearance-none cursor-pointer"
-                            >
-                                <option value="">Choose...</option>
-                                {users.map(u => (
-                                    <option key={u.id} value={u.id}>{u.name}</option>
-                                ))}
-                            </select>
-                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-6 text-[#0284c7] font-bold">
-                                ▼
-                            </div>
-                        </div>
+                        <select
+                            id="user"
+                            required
+                            value={selectedUserId}
+                            onChange={(e) => setSelectedUserId(e.target.value)}
+                            className="input-field"
+                        >
+                            <option value="">選択してください...</option>
+                            {users.map(u => (
+                                <option key={u.id} value={u.id}>{u.name}</option>
+                            ))}
+                        </select>
                     </div>
 
                     <div>
-                        <label htmlFor="pages" className="block text-sm font-bold text-gray-600 mb-2 ml-1">
-                            Current Page Number
+                        <label htmlFor="pages" className="block text-sm font-medium text-gray-700 mb-1">
+                            現在の到達ページ数
                         </label>
                         <input
                             type="number"
@@ -119,24 +110,23 @@ export default function LogPage() {
                             min="0"
                             value={pages}
                             onChange={(e) => setPages(e.target.value)}
-                            className="w-full px-6 py-4 bg-[#f0f9ff] border-2 border-[#bae6fd] rounded-2xl focus:border-[#0284c7] focus:ring-0 text-gray-700 outline-none transition font-medium text-lg placeholder-gray-300"
-                            placeholder="10p"
+                            className="input-field"
+                            placeholder="例: 10"
                         />
                     </div>
 
                     <button
                         type="submit"
                         disabled={submitting}
-                        className={`w-full py-4 bg-[#38bdf8] text-white font-bold rounded-2xl shadow-lg border-b-4 border-[#0ea5e9] active:border-b-0 active:translate-y-1 hover:bg-[#0ea5e9] transition-all text-lg ${submitting ? "opacity-50 cursor-not-allowed" : ""
-                            }`}
+                        className="w-full btn btn-primary"
                     >
-                        {submitting ? "Update Progress" : "Update!"}
+                        {submitting ? "記録中..." : "記録する"}
                     </button>
-
                 </form>
-                <div className="text-center pt-2">
-                    <Link href="/" className="text-sm text-gray-400 hover:text-[#0284c7] font-bold transition">
-                        Back to Top
+
+                <div className="text-center mt-6">
+                    <Link href="/" className="text-sm text-gray-500 hover:text-gray-900 hover:underline">
+                        キャンセル
                     </Link>
                 </div>
             </div>

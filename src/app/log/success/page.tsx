@@ -9,21 +9,26 @@ function SuccessContent() {
     const pages = searchParams.get("pages");
 
     return (
-        <main className="min-h-screen bg-[#fff1f2] flex flex-col items-center justify-center p-6 text-center">
-            <div className="bg-white p-10 rounded-3xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border-4 border-[#fbcfe8] max-w-sm w-full animate-bounce-short">
-                <div className="text-6xl mb-6">🎉</div>
-                <h1 className="text-3xl font-bold text-[#db2777] mb-4">Great Work!</h1>
-                <p className="text-gray-600 mb-8 text-lg">
-                    You've reached <span className="font-bold text-[#db2777] text-xl">Page {pages}</span>!
-                    <br />
-                    Keep that momentum going! ✨
+        <main className="min-h-screen bg-gray-50 flex flex-col items-center justify-center p-4">
+            <div className="card p-8 max-w-sm w-full text-center bg-white">
+                <div className="flex justify-center mb-4">
+                    <div className="h-12 w-12 bg-green-100 text-green-600 rounded-full flex items-center justify-center text-2xl">
+                        ✓
+                    </div>
+                </div>
+                <h1 className="text-lg font-bold text-gray-900 mb-2">
+                    記録完了
+                </h1>
+                <p className="text-gray-600 text-sm mb-6">
+                    お疲れ様です。<br />
+                    現在 <span className="font-bold text-gray-900">{pages}ページ</span> に到達しました。
                 </p>
 
                 <Link
                     href="/"
-                    className="inline-block w-full py-4 bg-[#f472b6] hover:bg-[#ec4899] text-white font-bold rounded-2xl shadow-lg transform transition hover:scale-105 active:scale-95 text-lg"
+                    className="btn btn-primary w-full"
                 >
-                    Back to Top
+                    ダッシュボードに戻る
                 </Link>
             </div>
         </main>
@@ -32,7 +37,7 @@ function SuccessContent() {
 
 export default function SuccessPage() {
     return (
-        <Suspense fallback={<div>Loading...</div>}>
+        <Suspense fallback={<div className="text-gray-500 text-sm p-8 text-center">読み込み中...</div>}>
             <SuccessContent />
         </Suspense>
     );
