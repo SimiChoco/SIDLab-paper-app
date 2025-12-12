@@ -112,7 +112,7 @@ export default async function ThesisProgress() {
                   <div key={log.id} className="flex flex-col gap-1 py-3 border-b border-gray-50 last:border-0 last:pb-0">
                     <div className="flex justify-between items-center">
                       <span className="font-medium text-gray-900 text-sm">{log.userName}</span>
-                      <span className="text-xs text-gray-400">{log.createdAt.toLocaleDateString()}</span>
+                      <span className="text-xs text-gray-400">{log.createdAt.toLocaleDateString('ja-JP', { year: 'numeric', month: '2-digit', day: '2-digit' })}</span>
                     </div>
                     <p className="text-sm text-gray-600">
                       <span className="font-semibold text-blue-600">{log.pages}ページ</span> に到達しました。
