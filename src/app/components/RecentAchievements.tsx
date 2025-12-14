@@ -87,16 +87,14 @@ export default function RecentAchievements({ users, allLogs, isHidden = false }:
     if (displayItems.length === 0) return null;
 
     return (
-        <section className="card p-6 mt-6 bg-gradient-to-r from-indigo-50 to-white">
-            <h2 className="text-lg font-semibold text-indigo-900 mb-4 flex items-center gap-2">
+        <section className="card px-2 pb-1 pt-2 bg-gradient-to-r from-indigo-50 to-white flex-1 flex flex-col justify-start">
+            <h2 className="text-lg font-semibold text-gray-900 mb-1 flex items-center gap-2">
                 🎉 最近の実績解除
             </h2>
             {/* Mask Container - Extended to fully cover side margins */}
-            {/* Optimized: Single container with conditional masks */}
-            
             <div className="relative mx-[-24px] px-[24px]"> 
                 {(!isHidden && !selectedItem) && (
-                    <div className="absolute right-[100%] top-[-100px] bottom-[-100px] w-[200vw] bg-gray-50 z-[860] pointer-events-none" />
+                    <div className="absolute right-[100%] top-[-100px] bottom-[-100px] w-[200vw] bg-gray-50 z-[3000] pointer-events-none" />
                 )}
 
                 <div 
@@ -116,15 +114,15 @@ export default function RecentAchievements({ users, allLogs, isHidden = false }:
                 </div>
 
                 {(!isHidden && !selectedItem) && (
-                    <div className="absolute left-[100%] top-[-100px] bottom-[-100px] w-[200vw] bg-gray-50 z-[860] pointer-events-none" />
+                    <div className="absolute left-[100%] top-[-100px] bottom-[-100px] w-[200vw] bg-gray-50 z-[3000] pointer-events-none" />
                 )}
             </div>
 
             {/* Modal Popup */}
             {selectedItem && (
                 <div className="fixed inset-0 z-[2000] flex items-center justify-center p-4 bg-black/60 backdrop-blur-md" onClick={handleCloseModal}>
-                    <div className="bg-white rounded-2xl w-full max-w-lg p-8 flex flex-col items-center shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
-                         <div className="w-96 h-96 relative mb-6">
+                    <div className="bg-white rounded-2xl w-full max-w-[90vw] md:max-w-lg p-6 md:p-8 flex flex-col items-center shadow-2xl animate-in zoom-in-95 duration-200" onClick={e => e.stopPropagation()}>
+                         <div className="w-64 h-64 md:w-96 md:h-96 relative mb-6">
                              {/* Large View for Detail - Local Canvas for Z-Index */}
                              <Canvas className="w-full h-full" style={{ zIndex: 2005 }}>
                                 <BadgeScene
@@ -134,11 +132,12 @@ export default function RecentAchievements({ users, allLogs, isHidden = false }:
                                     icon={selectedItem.icon || "★"}
                                     isLocked={false}
                                     enableControls={true}
+                                    initialSpin={true}
                                 />
                              </Canvas>
                          </div>
                          
-                         <h2 className="text-2xl font-bold text-gray-900 mb-2">{selectedItem.title}</h2>
+                         <h2 className="text-xl md:text-2xl font-bold text-gray-900 mb-2">{selectedItem.title}</h2>
                          
                          <div className="mb-2 text-center">
                             <span className="text-sm font-bold text-indigo-600 block">{selectedItem.userName}</span>
@@ -159,7 +158,9 @@ export default function RecentAchievements({ users, allLogs, isHidden = false }:
                                   selectedItem.tier === 'SILVER' ? 'bg-slate-400' : 
                                   selectedItem.tier === 'GOLD' ? 'bg-yellow-500' : 
                                   selectedItem.tier === 'PLATINUM' ? 'bg-slate-600' :
-                                  'bg-cyan-400' /* DIAMOND */
+                                  selectedItem.tier === 'DIAMOND' ? 'bg-cyan-400' :
+                                  selectedItem.tier === 'MASTER' ? 'bg-[#ff8fa3]' :
+                                  'bg-slate-900' /* DOCTOR */
                                 }`}>
                                 {selectedItem.tier}
                             </span>
@@ -250,37 +251,27 @@ function RecentAchievementItem({
     return (
         <div 
             ref={itemRef} 
-            className="snap-start flex-shrink-0 w-64 bg-white p-4 rounded-xl shadow-sm border border-indigo-100 flex flex-col items-center text-center cursor-pointer transition-transform hover:scale-105"
+            className="snap-start flex-shrink-0 w-36 md:w-52 bg-white p-2 md:p-3 rounded-xl shadow-sm border border-indigo-100 flex flex-col items-center text-center cursor-pointer transition-transform hover:scale-105"
             onClick={onClick}
         >
-            <div className="w-24 h-24 relative mb-2">
+            <div className="w-20 h-20 relative mb-1">
                 {!effectivePaused && (
                     <View className="w-full h-full">
                         <BadgeScene
                             tier={item.tier as any}
-                            label={""}
+                            label={label}
                             subLabel={""}
-                            icon={item.icon || "★"}
+                            icon={item.icon}
                             isLocked={false}
                             paused={false}
                         />
                     </View>
                 )}
-                
-                {/* HTML Text Overlay */}
-                <div className="absolute inset-0 flex flex-col items-center justify-center pointer-events-none z-10">
-                    <span 
-                        className={`font-bold text-lg drop-shadow-md transition-opacity duration-300 ${effectivePaused ? 'opacity-0' : 'text-white'}`} 
-                        style={{ textShadow: effectivePaused ? 'none' : '0 1px 2px rgba(0,0,0,0.3)' }}
-                    >
-                        {label}
-                    </span>
-                </div>
             </div>
 
-            <div className="w-full mt-2 flex flex-col items-center gap-1">
+            <div className="w-full mt-1 flex flex-col items-center gap-0.5">
                 {/* 1. Title */}
-                <p className="text-sm font-bold text-gray-900 truncate w-full">
+                <p className="text-xs font-bold text-gray-900 truncate w-full">
                     {item.title}
                 </p>
 
@@ -290,7 +281,9 @@ function RecentAchievementItem({
                       item.tier === 'SILVER' ? 'bg-slate-400' : 
                       item.tier === 'GOLD' ? 'bg-yellow-500' : 
                       item.tier === 'PLATINUM' ? 'bg-slate-600' :
-                      'bg-cyan-400' /* DIAMOND */
+                      item.tier === 'DIAMOND' ? 'bg-cyan-400' :
+                      item.tier === 'MASTER' ? 'bg-[#ff8fa3]' :
+                      'bg-slate-900' /* DOCTOR */
                     }`}>
                     {item.tier}
                 </span>

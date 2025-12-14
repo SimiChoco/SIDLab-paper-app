@@ -50,62 +50,87 @@ export default function RankingWithBadges({ ranking, allLogs, onModalStateChange
     const [scrollContainer, setScrollContainer] = useState<HTMLDivElement | null>(null);
     const [isDetailPopupOpen, setIsDetailPopupOpen] = useState(false);
 
+    // Extracted Render Function for Cleaner Loop logic
+    const renderUserRow = (user: SerializedUser, index: number) => {
+        const logs = allLogs
+            .filter(l => l.userId === user.id)
+            .map(l => ({...l, createdAt: new Date(l.createdAt)}));
+        
+        const { unlockedIds } = calculateAchievements(logs, user.totalPages);
+
+        return (
+            <div 
+                key={user.id} 
+                className="group flex items-center justify-between py-2 px-3 rounded-lg bg-gray-50/50 border border-gray-100 hover:bg-white hover:border-indigo-200 hover:shadow-sm cursor-pointer transition-all duration-200"
+                onClick={() => handleUserClick(user)}
+            >
+                <div className="flex items-center gap-2">
+                    <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold shadow-sm ${index < 3 ? 'bg-gradient-to-br from-blue-100 to-white text-blue-700 ring-1 ring-blue-200' : 'bg-white text-gray-500 ring-1 ring-gray-200'}`}>
+                        {index + 1}
+                    </span>
+                    <div>
+                        <span className="text-gray-900 font-bold text-xs block group-hover:text-indigo-700 transition-colors">{user.name}</span>
+                        {/* Mini Badge Indicators */}
+                        {unlockedIds.length > 0 && (
+                            <div className="flex gap-0.5 mt-0.5">
+                                {unlockedIds.length >= 1 && <div className="w-1.5 h-1.5 rounded-full bg-yellow-400 shadow-sm" title="Achievement Unlocked" />}
+                                {unlockedIds.length >= 5 && <div className="w-1.5 h-1.5 rounded-full bg-blue-400 shadow-sm" />}
+                                {unlockedIds.length >= 10 && <div className="w-1.5 h-1.5 rounded-full bg-purple-400 shadow-sm" />}
+                                {unlockedIds.length >= 20 && <div className="w-1.5 h-1.5 rounded-full bg-red-400 shadow-sm" />}
+                                {unlockedIds.length >= 50 && <div className="w-1.5 h-1.5 rounded-full bg-black shadow-sm" />}
+                            </div>
+                        )}
+                    </div>
+                </div>
+                <div className="text-right flex flex-col items-end gap-0.5">
+                    <div className="text-gray-900 font-bold text-sm">
+                        {user.totalPages} <span className="text-[10px] text-gray-500 font-normal">p</span>
+                    </div>
+                    
+                    {/* Dynamic "View" Button */}
+                    <div className="flex items-center gap-1">
+                        {unlockedIds.length > 0 && (
+                            <div className="text-[10px] text-indigo-500 font-medium flex items-center gap-0.5 bg-white/50 px-1.5 py-0 rounded-full border border-indigo-50 group-hover:border-indigo-200 group-hover:bg-white transition-colors">
+                                <Trophy size={8} />
+                                {unlockedIds.length}
+                            </div>
+                        )}
+                        <span className="text-[9px] font-bold text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-full group-hover:bg-indigo-600 group-hover:text-white transition-all duration-300 transform group-hover:translate-x-0 opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0">
+                            詳細
+                        </span>
+                    </div>
+                </div>
+            </div>
+        );
+    };
+
     return (
         <>
-            <section className="card p-6">
-                {/* ... existing ranking list ... */}
-                <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-                    🏆 現在のランキング
-                </h2>
-                <div className="space-y-0 divide-y divide-gray-100">
-                    {ranking.length === 0 ? (
-                        <p className="text-center text-gray-500 py-8 text-sm">データがありません。</p>
-                    ) : (
-                        ranking.map((user, index) => {
-                             // Calculation for preview
-                             const logs = allLogs
-                                .filter(l => l.userId === user.id)
-                                .map(l => ({...l, createdAt: new Date(l.createdAt)}));
-                             
-                             const { unlockedIds } = calculateAchievements(logs, user.totalPages);
-                             
-                             return (
-                                <div 
-                                    key={user.id} 
-                                    className="flex items-center justify-between py-3 hover:bg-gray-50 cursor-pointer transition-colors px-2 -mx-2 rounded-lg"
-                                    onClick={() => handleUserClick(user)}
-                                >
-                                    <div className="flex items-center gap-3">
-                                        <span className={`flex items-center justify-center w-6 h-6 rounded-full text-xs font-bold ${index < 3 ? 'bg-blue-100 text-blue-700' : 'bg-gray-100 text-gray-500'}`}>
-                                            {index + 1}
-                                        </span>
-                                        <div>
-                                            <span className="text-gray-900 font-medium text-sm block">{user.name}</span>
-                                            {/* Mini Badge Indicators */}
-                                            {unlockedIds.length > 0 && (
-                                                <div className="flex gap-1 mt-1">
-                                                    {unlockedIds.length >= 1 && <div className="w-2 h-2 rounded-full bg-yellow-400" title="Achievement Unlocked" />}
-                                                    {unlockedIds.length >= 5 && <div className="w-2 h-2 rounded-full bg-blue-400" />}
-                                                    {unlockedIds.length >= 10 && <div className="w-2 h-2 rounded-full bg-purple-400" />}
-                                                </div>
-                                            )}
-                                        </div>
-                                    </div>
-                                    <div className="text-right">
-                                        <div className="text-gray-900 font-semibold text-sm">
-                                            {user.totalPages} <span className="text-xs text-gray-500 font-normal">p</span>
-                                        </div>
-                                        {unlockedIds.length > 0 && (
-                                            <div className="text-xs text-indigo-500 font-medium flex items-center justify-end gap-1">
-                                                <Trophy size={10} />
-                                                {unlockedIds.length} 個
-                                            </div>
-                                        )}
-                                    </div>
-                                </div>
-                            );
-                        })
-                    )}
+            <section className="card flex flex-col h-full overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div className="p-3 pb-1 shrink-0 border-b border-gray-50">
+                    <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                        🏆 現在のランキング
+                    </h2>
+                </div>
+                <div className="flex-1 min-h-0 grid grid-cols-2 gap-2 p-2 bg-white">
+                    {/* Left Column (1-5) */}
+                    <div className="overflow-y-auto px-1 py-1 custom-scrollbar">
+                         <div className="space-y-2">
+                            {ranking.slice(0, 5).map((user, index) => renderUserRow(user, index))}
+                            {ranking.length === 0 && <p className="text-center text-gray-500 py-4 text-xs">データなし</p>}
+                         </div>
+                    </div>
+                    
+                    {/* Right Column (6+) */}
+                    <div className="overflow-y-auto px-1 py-1 custom-scrollbar">
+                         <div className="space-y-2">
+                            {ranking.length > 5 ? (
+                                ranking.slice(5).map((user, index) => renderUserRow(user, index + 5))
+                            ) : (
+                                <p className="text-center text-gray-400 py-8 text-xs">ランキング掲載者は5名以内です</p>
+                            )}
+                         </div>
+                    </div>
                 </div>
             </section>
 

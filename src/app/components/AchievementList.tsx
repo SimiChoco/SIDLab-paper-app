@@ -9,6 +9,7 @@ import { BadgeScene } from './Badge3D';
 interface AchievementListProps {
     unlockedIds: string[];
     scrollContainer?: HTMLElement | null;
+    onPopupChange?: (isOpen: boolean) => void;
 }
 
 function AchievementListItem({ 
@@ -114,7 +115,9 @@ function AchievementListItem({
                       ach.tier === 'SILVER' ? 'bg-slate-400' : 
                       ach.tier === 'GOLD' ? 'bg-yellow-500' : 
                       ach.tier === 'PLATINUM' ? 'bg-slate-600' :
-                      'bg-cyan-400' /* DIAMOND */
+                      ach.tier === 'DIAMOND' ? 'bg-cyan-400' :
+                      ach.tier === 'MASTER' ? 'bg-[#ff8fa3]' :
+                      'bg-slate-900' /* DOCTOR */
                     } ${!isUnlocked ? 'opacity-50 grayscale' : ''}`}>
                     {ach.tier}
                 </span>
@@ -190,7 +193,9 @@ export default function AchievementList({ unlockedIds, scrollContainer, onPopupC
                                   selectedAch.tier === 'SILVER' ? 'bg-slate-400' : 
                                   selectedAch.tier === 'GOLD' ? 'bg-yellow-500' : 
                                   selectedAch.tier === 'PLATINUM' ? 'bg-slate-600' :
-                                  'bg-cyan-400' /* DIAMOND */
+                                  selectedAch.tier === 'DIAMOND' ? 'bg-cyan-400' :
+                                  selectedAch.tier === 'MASTER' ? 'bg-[#ff8fa3]' :
+                                  'bg-slate-900' /* DOCTOR */
                                 }`}>
                                 {selectedAch.tier}
                             </span>

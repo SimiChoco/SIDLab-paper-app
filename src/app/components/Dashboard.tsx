@@ -23,50 +23,62 @@ export default function Dashboard({ ranking, recentLogs, allLogs }: DashboardPro
   const isModalOpen = !!selectedUserForModal;
 
   return (
-    <div className="max-w-5xl mx-auto space-y-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        {/* Ranking Card */}
-        <RankingWithBadges 
-          ranking={ranking} 
-          allLogs={allLogs}
-          onModalStateChange={(user) => setSelectedUserForModal(user)}
-          selectedUserProp={selectedUserForModal} 
-        />
+    <div className="h-full flex flex-col gap-2 pb-0">
+      {/* Top Half: Ranking & Latest Updates (Fixed Height ~51%) */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-2 h-auto md:h-[51vh] shrink-0">
+        {/* Ranking Card - Takes 2 Columns */}
+        <div className="h-full overflow-hidden md:col-span-2">
+             <RankingWithBadges 
+               ranking={ranking} 
+               allLogs={allLogs}
+               onModalStateChange={(user) => setSelectedUserForModal(user)}
+               selectedUserProp={selectedUserForModal} 
+             />
+        </div>
 
-        {/* Recent Activity Card - Keeping this static markup here or could componentize it */}
-        <section className="card p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
-            📝 最新の更新
-          </h2>
-          <div className="space-y-0 divide-y divide-gray-100">
-            {recentLogs.length === 0 ? (
-              <p className="text-center text-gray-500 py-8 text-sm">更新履歴がありません。</p>
-            ) : (
-              recentLogs.map((log) => (
-                <div key={log.id} className="flex flex-col gap-1 py-3 border-b border-gray-50 last:border-0 last:pb-0">
-                  <div className="flex justify-between items-center">
-                    <span className="font-medium text-gray-900 text-sm">{log.userName}</span>
-                    <span className="text-xs text-gray-400">{new Date(log.createdAt).toLocaleDateString('ja-JP')}</span>
-                  </div>
-                  <p className="text-sm text-gray-600">
-                    <span className="font-semibold text-blue-600">{log.pages}ページ</span> に到達しました。
-                  </p>
-                </div>
-              ))
-            )}
+        {/* Recent Activity Card - Takes 1 Column */}
+        <section className="card flex flex-col h-full overflow-hidden bg-white rounded-2xl shadow-sm border border-gray-100">
+          <div className="p-4 pb-2 shrink-0 border-b border-gray-50">
+             <h2 className="text-lg font-semibold text-gray-900 flex items-center gap-2">
+                📝 最新の更新
+             </h2>
+          </div>
+          <div className="p-2 overflow-y-auto flex-1 custom-scrollbar">
+              <div className="space-y-0 divide-y divide-gray-50">
+                {recentLogs.length === 0 ? (
+                  <p className="text-center text-gray-500 py-8 text-sm">更新履歴がありません。</p>
+                ) : (
+                  recentLogs.map((log) => (
+                    <div key={log.id} className="flex flex-col gap-0.5 py-1.5 px-2 border-b border-gray-50 last:border-0 last:pb-0 hover:bg-gray-50 rounded-lg transition-colors">
+                      <div className="flex justify-between items-center">
+                        <span className="font-bold text-gray-900 text-xs">{log.userName}</span>
+                        <span className="text-[10px] text-gray-400">{new Date(log.createdAt).toLocaleDateString('ja-JP')}</span>
+                      </div>
+                      <p className="text-xs text-gray-600">
+                        <span className="font-bold text-blue-600 text-sm">{log.pages}p</span> 到達
+                      </p>
+                    </div>
+                  ))
+                )}
+              </div>
           </div>
         </section>
       </div>
       
-      {/* Recent Achievements Feed - HIDES when modal is open */}
-      <RecentAchievements 
-        users={ranking} 
-        allLogs={allLogs} 
-        isHidden={isModalOpen} 
-      />
+      {/* Bottom Half: Recent Achievements Feed (Fills remaining space) */}
+      <div className="flex-1 flex flex-col min-h-[400px]">
+          {/* We pass a class to allow internal scrolling of the list if needed, 
+              but RecentAchievements might need similar 'flex h-full' treatment. 
+              Let's Wrap it. 
+          */}
+          <RecentAchievements 
+            users={ranking} 
+            allLogs={allLogs} 
+            isHidden={isModalOpen} 
+          />
+      </div>
 
-      {/* Delete Section */}
-      <DeleteUserSection users={ranking.map(u => ({ ...u, updatedAt: new Date(u.updatedAt) }))} />
+
     </div>
   );
 }

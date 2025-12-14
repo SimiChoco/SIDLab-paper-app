@@ -50,40 +50,42 @@ export default async function ThesisProgress() {
   const { ranking, recentLogs, allLogs } = await getData();
 
   return (
-    <main className="min-h-screen p-6 font-sans bg-gray-50 overflow-x-hidden">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <main className="min-h-[120vh] w-full p-2 font-sans bg-gray-50 flex flex-col overflow-x-hidden">
+      <div className="max-w-6xl mx-auto w-full flex-1 flex flex-col">
         {/* Header Section */}
-        <header className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-200 pb-6">
-          <div>
-            <h1 className="text-2xl font-bold text-gray-900">
+        <header className="flex flex-row justify-between items-center gap-2 border-b border-gray-200 pb-2 mb-2 shrink-0">
+          <div className="flex items-baseline gap-3">
+            <h1 className="text-lg font-bold text-gray-900">
               進捗管理君
             </h1>
-            <p className="text-sm text-gray-500 mt-1">
+            <p className="text-xs text-gray-500 hidden sm:block">
               Simple Thesis Progress Tracker
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Link
               href="/register"
-              className="btn btn-primary text-sm shadow-sm"
+              className="btn btn-primary text-xs px-3 py-1 h-8 min-h-0 shadow-sm"
             >
               新規登録
             </Link>
             <Link
               href="/log"
-              className="btn btn-secondary text-sm shadow-sm"
+              className="btn btn-secondary text-xs px-3 py-1 h-8 min-h-0 shadow-sm"
             >
               進捗を記録
             </Link>
           </div>
         </header>
 
-        {/* Main Dashboard Area */}
-        <Dashboard 
-            ranking={ranking.map(u => ({...u, updatedAt: u.updatedAt.getTime()}))}
-            recentLogs={recentLogs.map(l => ({...l, createdAt: l.createdAt.getTime()}))}
-            allLogs={allLogs.map(l => ({...l, createdAt: l.createdAt.getTime()}))}
-        />
+        {/* Main Dashboard Area - Fills remaining height */}
+        <div className="flex-1 flex flex-col min-h-0">
+            <Dashboard 
+                ranking={ranking.map(u => ({...u, updatedAt: u.updatedAt.getTime()}))}
+                recentLogs={recentLogs.map(l => ({...l, createdAt: l.createdAt.getTime()}))}
+                allLogs={allLogs.map(l => ({...l, createdAt: l.createdAt.getTime()}))}
+            />
+        </div>
       </div>
       
       {/* Global 3D Canvas */}

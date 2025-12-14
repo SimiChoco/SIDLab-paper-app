@@ -16,7 +16,7 @@ export default function ViewCanvas() {
                 zIndex: 840,
             }}
 
-            dpr={[1, 1.5]}
+            dpr={[1, 1.5]} // Limit DPR for performance stability
             onCreated={(state) => {
                 console.log("[ViewCanvas] Init. Scale:", state.viewport.dpr);
                 console.log("[ViewCanvas] Event Source:", state.events.connected);

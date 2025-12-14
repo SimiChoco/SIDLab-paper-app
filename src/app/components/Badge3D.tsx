@@ -15,26 +15,89 @@ interface Badge3DProps {
     isLocked?: boolean;
     paused?: boolean; // Control animation/rendering effort
     interactive?: boolean; // New: Mouse interaction mode (parallax)
+    initialSpin?: boolean; // New: Start with a spin animation
 }
 
 const TIER_COLORS: Record<BadgeTier, string> = {
     BRONZE: "#cd7f32",
     SILVER: "#c0c0c0",
     GOLD: "#ffd700",
-    PLATINUM: "#e5e4e2",
-    DIAMOND: "#b9f2ff"
+    PLATINUM: "#7CB9E8", // Stronger Light Blue (Aero)
+    DIAMOND: "#e2d1ff",
+    MASTER: "#ff8fa3",   // Weaker Red (Salmon/Pinkish)
+    DOCTOR: "#1a1a1a"    // Black Titanium
 };
 
-function Model({ tier, label, subLabel, icon, isLocked, paused = false, interactive = false }: Badge3DProps) {
+function Model({ tier, label, subLabel, icon, isLocked, paused = false, interactive = false, initialSpin = false }: Badge3DProps) {
     const meshRef = useRef<THREE.Group>(null);
     const [hovered, setHover] = useState(false);
     const [active, setActive] = useState(false);
+    
+    // Initial Spin State
+    const [spinning, setSpinning] = useState(initialSpin);
+    const spinVelocity = useRef(initialSpin ? 10 : 0); // Start slower (tuned for ~2 rotations)
+
     useCursor(hovered);
 
     // Rotation logic
     useFrame((state, delta) => {
         if (!meshRef.current) return;
         if (paused) return; 
+
+        // 0. Handle Initial Spin
+        if (spinning) {
+            // Initialize transition to Landing if eligible
+            if (!meshRef.current.userData.landing) {
+                // If velocity is manageable, calculate landing
+                if (spinVelocity.current < 5.0) {
+                     const currentY = meshRef.current.rotation.y;
+                     let targetY = Math.ceil(currentY / (Math.PI * 2)) * (Math.PI * 2);
+                     let dist = targetY - currentY;
+                     
+                     // Avoid divide by zero
+                     if (dist < 0.001) {
+                         targetY += Math.PI * 2;
+                         dist = targetY - currentY;
+                     }
+                     
+                     // Calculate required deceleration: v^2 = 2 * a * d  =>  a = v^2 / (2d)
+                     let decel = (spinVelocity.current * spinVelocity.current) / (2 * dist);
+                     
+                     // If braking is too harsh (>2.5 rad/s^2), spin one more time
+                     // 5.0 rad/s is roughly 1 rotation per second. 
+                     if (decel > 2.0) {
+                        targetY += Math.PI * 2;
+                        dist = targetY - currentY;
+                        decel = (spinVelocity.current * spinVelocity.current) / (2 * dist);
+                     }
+                     
+                     meshRef.current.userData.landing = true;
+                     meshRef.current.userData.decel = decel;
+                     meshRef.current.userData.target = targetY;
+                } else {
+                    // Decay normally until slow enough
+                    spinVelocity.current *= (1 - delta * 1.0); // Stronger friction (was 0.5)
+                }
+            }
+            
+            if (meshRef.current.userData.landing) {
+                const decel = meshRef.current.userData.decel;
+                // v_new = v_old - a * dt
+                spinVelocity.current -= decel * delta;
+                
+                // Check stop
+                if (spinVelocity.current <= 0) {
+                    spinVelocity.current = 0;
+                    meshRef.current.rotation.y = 0; // RESET TO 0 (modulo 2π) to prevent rewind
+                    setSpinning(false);
+                    meshRef.current.userData.landing = false;
+                    meshRef.current.userData.decel = 0;
+                }
+            }
+
+            meshRef.current.rotation.y += spinVelocity.current * delta;
+            return;
+        }
 
         // Optimization: If NOT active and NOT hovered and NOT interactive and rotation effectively zero, skip math
         if (!active && !hovered && !interactive && Math.abs(meshRef.current.rotation.y) < 0.01 && Math.abs(meshRef.current.rotation.x) < 0.01) {
@@ -69,12 +132,17 @@ function Model({ tier, label, subLabel, icon, isLocked, paused = false, interact
     });
 
     const color = isLocked ? "#555" : TIER_COLORS[tier] || "#fff";
-    const metalness = isLocked ? 0.2 : 0.9;
-    const roughness = isLocked ? 0.8 : 0.1;
+    
+    // Custom material props for DOCTOR to be "Black Mirror"
+    const isDoctor = tier === 'DOCTOR';
+    const metalness = isLocked ? 0.2 : (isDoctor ? 1.0 : 0.9);
+    const roughness = isLocked ? 0.8 : (isDoctor ? 0.0 : 0.1);
 
     // Display Logic
-    // If icon is provided, use it. Otherwise use generic star or lock.
-    const displayText = icon || (isLocked ? "🔒" : "★");
+    // If icon is provided, use it. 
+    // If not, use label (e.g. "50"). 
+    // If neither, uses lock or star.
+    const displayText = icon || label || (isLocked ? "🔒" : "★");
 
     return (
         <group ref={meshRef} 
@@ -87,10 +155,16 @@ function Model({ tier, label, subLabel, icon, isLocked, paused = false, interact
             {/* Main Medal Body */}
             <mesh rotation={[Math.PI / 2, 0, 0]}>
                 <cylinderGeometry args={[2, 2, 0.3, 24]} />
-                <meshStandardMaterial 
+                <meshPhysicalMaterial 
                     color={color} 
                     metalness={metalness} 
-                    roughness={roughness} 
+                    roughness={roughness}
+                    clearcoat={isDoctor ? 1.0 : 0}
+                    clearcoatRoughness={0}
+                    reflectivity={isDoctor ? 1.0 : 0.5}
+                    envMapIntensity={isDoctor ? 10.0 : 1.0} // Extreme reflection
+                    iridescence={isDoctor ? 0.3 : 0} // Subtle rainbow sheen
+                    iridescenceIOR={1.6}
                 />
             </mesh>
             
@@ -101,7 +175,7 @@ function Model({ tier, label, subLabel, icon, isLocked, paused = false, interact
                 position={[0, 0, 0.18]} // Centered
                 fontSize={2.2} // Much bigger
                 fontWeight="800" // Thicker (if font supports it)
-                color={isLocked ? "#222" : "#ffffff"} 
+                color={isLocked ? "#222" : (isDoctor ? "#e60000" : "#ffffff")} // Brighter Red 
                 anchorX="center"
                 anchorY="middle"
                 renderOrder={2} 
@@ -163,12 +237,12 @@ export function BadgeScene(props: Badge3DProps & { enableControls?: boolean }) {
             {/* Isolated Camera for this View */}
             <PerspectiveCamera makeDefault position={[0, 0, 5]} fov={50} />
             
-            <ambientLight intensity={0.5} />
-            <spotLight position={[10, 10, 10]} angle={0.15} penumbra={1} intensity={1} />
-            <pointLight position={[-10, -10, -10]} intensity={0.5} />
+            <ambientLight intensity={0.8} /> {/* Brighter ambient */}
+            <spotLight position={[10, 10, 10]} angle={0.2} penumbra={1} intensity={2} /> {/* Brighter highlight */}
+            <pointLight position={[-10, -10, -10]} intensity={1} />
             <Model {...props} interactive={!!props.enableControls} /> {/* Pass interactive prop */}
             {/* Environment is required for metalness materials to not look black */}
-            <Environment preset="park" />
+            <Environment preset="sunset" />
             {props.enableControls && (
                 <OrbitControls 
                     ref={controlsRef}
