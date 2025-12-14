@@ -78,6 +78,7 @@ export default async function ThesisProgress() {
           </div>
         </header>
 
+
         {/* Main Dashboard Area - Fills remaining height */}
         <div className="flex-1 flex flex-col min-h-0">
             <Dashboard 
