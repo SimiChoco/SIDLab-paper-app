@@ -177,3 +177,21 @@ export async function getRecentLogs() {
         } as ReadingLog;
     });
 }
+
+// Get ALL logs (with reasonable limit) for achievement calculation
+export async function getAllLogs() {
+    const logsRef = collection(db, LOGS_COLLECTION);
+    const q = query(logsRef, orderBy("createdAt", "desc"), limit(1000));
+    const querySnapshot = await getDocs(q);
+
+    return querySnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+             id: doc.id,
+             userId: data.userId,
+             userName: data.userName,
+             pages: data.pages,
+             createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
+        } as ReadingLog;
+    });
+}
