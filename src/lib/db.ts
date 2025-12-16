@@ -24,7 +24,6 @@ import {
   validateAndConvertUser,
   validateAndConvertReadingLog,
 } from "./types";
-import { useTransition } from "react";
 
 export const USERS_COLLECTION = "users";
 export const LOGS_COLLECTION = "logs";
