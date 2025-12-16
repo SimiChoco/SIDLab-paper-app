@@ -120,13 +120,15 @@ export async function getAllUsers() {
 export async function addReadingLog(
   userId: string,
   userName: string,
-  currentTotalPages: number
+  currentTotalPages: number,
+  comment: string
 ) {
   // 1. Add Log (Recording the milestone reached)
   await addDoc(collection(db, LOGS_COLLECTION), {
     userId,
     userName,
     pages: currentTotalPages, // NOW REPRESENTS "REACHED PAGE X"
+    comment: comment,
     createdAt: serverTimestamp(),
   });
 
@@ -134,6 +136,7 @@ export async function addReadingLog(
   const userRef = doc(db, USERS_COLLECTION, userId);
   await updateDoc(userRef, {
     totalPages: currentTotalPages,
+    comment: comment,
     updatedAt: serverTimestamp(),
   });
 }
