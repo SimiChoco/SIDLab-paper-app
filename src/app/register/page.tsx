@@ -12,6 +12,14 @@ export default function RegisterPage() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  const MAX_COMMENT_LENGTH = 40;
+
+  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= MAX_COMMENT_LENGTH) {
+      setComment(e.target.value);
+    }
+  };
+
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
     setLoading(true);
@@ -62,16 +70,21 @@ export default function RegisterPage() {
           </div>
 
           <div>
-            <label
-              htmlFor="comment"
-              className="block text-sm font-medium text-gray-700 mb-1"
-            >
-              コメント
-            </label>
+            <div className="flex justify-between items-center mb-1">
+              <label
+                htmlFor="comment"
+                className="block text-sm font-medium text-gray-700"
+              >
+                コメント
+              </label>
+              <span className="text-sm text-gray-500">
+                {comment.length}/{MAX_COMMENT_LENGTH}
+              </span>
+            </div>
             <textarea
               id="comment"
               value={comment}
-              onChange={(e) => setComment(e.target.value)}
+              onChange={handleCommentChange}
               className="input-field"
               placeholder="みんなにあいさつしよう！"
               rows={3}
