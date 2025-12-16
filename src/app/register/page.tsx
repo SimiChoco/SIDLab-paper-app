@@ -4,6 +4,9 @@ import { useState } from "react";
 import { createUser } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import InputComment from "../components/InputComment";
+
+const MAX_COMMENT_LENGTH = 40;
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -11,8 +14,6 @@ export default function RegisterPage() {
   const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const MAX_COMMENT_LENGTH = 40;
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (e.target.value.length <= MAX_COMMENT_LENGTH) {
@@ -68,28 +69,12 @@ export default function RegisterPage() {
               placeholder="名前を入力"
             />
           </div>
-
-          <div>
-            <div className="flex justify-between items-center mb-1">
-              <label
-                htmlFor="comment"
-                className="block text-sm font-medium text-gray-700"
-              >
-                コメント
-              </label>
-              <span className="text-sm text-gray-500">
-                {comment.length}/{MAX_COMMENT_LENGTH}
-              </span>
-            </div>
-            <textarea
-              id="comment"
-              value={comment}
-              onChange={handleCommentChange}
-              className="input-field"
-              placeholder="みんなにあいさつしよう！"
-              rows={3}
-            />
-          </div>
+          <InputComment
+            comment={comment}
+            onChange={handleCommentChange}
+            placeholder={"みんなにあいさつしよう！"}
+            maxCommentLength={MAX_COMMENT_LENGTH}
+          />
 
           <button
             type="submit"
