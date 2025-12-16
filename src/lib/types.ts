@@ -5,7 +5,7 @@ export interface User {
   name: string;
   totalPages: number;
   comment: string;
-  likedList: string[];
+  likedNum: number;
   updatedAt: Date;
 }
 
@@ -15,7 +15,7 @@ export interface ReadingLog {
   userName: string;
   pages: number;
   comment: string;
-  likedList: string[];
+  likedNum: number;
   createdAt: Date;
 }
 
@@ -43,8 +43,8 @@ export function validateAndConvertUser(doc: DocumentSnapshot): User {
     id: doc.id,
     name: data.name,
     totalPages: data.totalPages,
-    comment: data.comment || "", // Default to empty string if missing
-    likedList: data.likedList || [], // Default to empty array if missing
+    comment: data.comment || "",
+    likedNum: data.likedNum || 0,
     updatedAt: data.updatedAt.toDate(),
   };
 }
@@ -80,7 +80,7 @@ export function validateAndConvertReadingLog(
     userName: data.userName,
     pages: data.pages,
     comment: data.comment || "", // Default to empty string if missing
-    likedList: data.likedList || [], // Default to empty array if missing
+    likedNum: data.likedNum || 0, // Default to empty array if missing
     createdAt: data.createdAt.toDate(),
   };
 }
