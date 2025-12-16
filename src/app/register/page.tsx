@@ -8,7 +8,7 @@ import Link from "next/link";
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [comment, setComment] = useState("default comment");
+  const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -58,6 +58,23 @@ export default function RegisterPage() {
               onChange={(e) => setName(e.target.value)}
               className="input-field"
               placeholder="名前を入力"
+            />
+          </div>
+
+          <div>
+            <label
+              htmlFor="comment"
+              className="block text-sm font-medium text-gray-700 mb-1"
+            >
+              コメント
+            </label>
+            <textarea
+              id="comment"
+              value={comment}
+              onChange={(e) => setComment(e.target.value)}
+              className="input-field"
+              placeholder="みんなにあいさつしよう！"
+              rows={3}
             />
           </div>
 
