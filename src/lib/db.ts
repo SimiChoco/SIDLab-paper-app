@@ -18,30 +18,22 @@ import {
 } from "firebase/firestore";
 import { db } from "./firebase";
 export { db };
-import { User, ReadingLog } from "./types";
+import {
+  User,
+  ReadingLog,
+  validateAndConvertUser,
+  validateAndConvertReadingLog,
+} from "./types";
+import { useTransition } from "react";
 
 export const USERS_COLLECTION = "users";
 export const LOGS_COLLECTION = "logs";
 
-export async function getLogById(logId: string): Promise<ReadingLog | null> {
+export async function getLogById(logId: string): Promise<ReadingLog> {
   const docRef = doc(db, LOGS_COLLECTION, logId);
   const docSnap = await getDoc(docRef);
-
-  if (docSnap.exists()) {
-    const data = docSnap.data();
-    return {
-      id: docSnap.id,
-      userId: data.userId,
-      userName: data.userName,
-      pages: data.pages,
-      comment: data.comment,
-      likedList: data.likedList,
-      paperTitle: data.paperTitle,
-      createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
-    } as ReadingLog;
-  } else {
-    return null;
-  }
+  const data = validateAndConvertReadingLog(docSnap);
+  return data;
 }
 
 export async function updateReadingLog(logId: string, newPages: number) {
@@ -155,38 +147,79 @@ export async function deleteUser(userId: string) {
   await deleteDoc(doc(db, USERS_COLLECTION, userId));
 }
 
-export async function getRanking() {
+export async function getRanking(): Promise<User[]> {
   const usersRef = collection(db, USERS_COLLECTION);
   const q = query(usersRef, orderBy("totalPages", "desc"), limit(50));
   const querySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      name: data.name,
-      totalPages: data.totalPages,
-      updatedAt: (data.updatedAt as Timestamp)?.toDate() || new Date(),
-    } as User;
+    const data = validateAndConvertUser(doc);
+    return data;
   });
 }
 
-export async function getRecentLogs() {
+export async function getRecentLogs(): Promise<ReadingLog[]> {
   const logsRef = collection(db, LOGS_COLLECTION);
   const q = query(logsRef, orderBy("createdAt", "desc"), limit(20));
   const querySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map((doc) => {
-    const data = doc.data();
-    return {
-      id: doc.id,
-      userId: data.userId,
-      userName: data.userName,
-      pages: data.pages,
-      comment: data.comment,
-      likedList: data.likedList,
-      paperTitle: data.paperTitle,
-      createdAt: (data.createdAt as Timestamp)?.toDate() || new Date(),
-    } as ReadingLog;
+    const data = validateAndConvertReadingLog(doc);
+    return data;
   });
+}
+
+export async function addLiked(
+  targetDb: "Users" | "ReadingLog",
+  id: string,
+  likedUserId: string
+) {
+  switch (targetDb) {
+    case "Users":
+      try {
+        await runTransaction(db, async (transaction) => {
+          const userRef = doc(db, USERS_COLLECTION, id);
+          const userDoc = await transaction.get(userRef);
+          if (!userDoc.exists()) {
+            throw new Error("User not found!");
+          }
+
+          const userData = validateAndConvertUser(userDoc);
+
+          const likedList = userData.likedList;
+          likedList.push(likedUserId);
+
+          transaction.update(userRef, {
+            likedList: likedList,
+          });
+        });
+        console.log("Add liked successfully committed!");
+      } catch (e) {
+        console.log("Add liked failed: ", e);
+        throw e;
+      }
+    case "ReadingLog":
+      try {
+        await runTransaction(db, async (transaction) => {
+          const logRef = doc(db, LOGS_COLLECTION, id);
+          const logDoc = await transaction.get(logRef);
+          if (!logDoc.exists()) {
+            throw new Error("Log not found!");
+          }
+
+          const logData = validateAndConvertReadingLog(logDoc);
+
+          const likedList = logData.likedList;
+          likedList.push(likedUserId);
+
+          transaction.update(logRef, {
+            likedList: likedList,
+          });
+        });
+        console.log("Add liked successfully committed!");
+      } catch (e) {
+        console.log("Add liked failed: ", e);
+        throw e;
+      }
+  }
 }
