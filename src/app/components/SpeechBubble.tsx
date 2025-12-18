@@ -29,7 +29,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   return (
     <div
       className="relative flex bg-gray-50 rounded-lg p-2"
-      style={{ display: comment ? "true" : "false", marginRight: "8px" }}
+      style={{ display: comment ? "true" : "false" }}
     >
       <p className="text-sm text-gray-800">{comment}</p>
       <div className="absolute top-1/2 -translate-y-1/2 left-[-8px] w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-50"></div>

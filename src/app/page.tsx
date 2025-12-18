@@ -131,14 +131,6 @@ export default async function ThesisProgress() {
                         <span className="font-medium text-gray-900 text-sm">
                           {log.userName}
                         </span>
-                        {log.comment && (
-                          <SpeechBubble
-                            comment={log.comment}
-                            likedNum={log.likedNum}
-                            targetDb={"ReadingLog"}
-                            id={log.id}
-                          />
-                        )}
                       </div>
                       <span className="text-xs text-gray-400">
                         {log.createdAt.toLocaleDateString("ja-JP", {
@@ -148,12 +140,22 @@ export default async function ThesisProgress() {
                         })}
                       </span>
                     </div>
-                    <p className="text-sm text-gray-600">
-                      <span className="font-semibold text-blue-600">
-                        {log.pages}ページ
-                      </span>{" "}
-                      に到達しました。
-                    </p>
+                    <div className="flex justify-between items-center">
+                      <p className="text-sm text-gray-600">
+                        <span className="font-semibold text-blue-600">
+                          {log.pages}ページ
+                        </span>{" "}
+                        に到達しました。
+                      </p>
+                      {log.comment && (
+                        <SpeechBubble
+                          comment={log.comment}
+                          likedNum={log.likedNum}
+                          targetDb={"ReadingLog"}
+                          id={log.id}
+                        />
+                      )}
+                    </div>
                   </div>
                 ))
               )}
