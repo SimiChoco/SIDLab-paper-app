@@ -2,7 +2,7 @@
 
 import { ChangeEventHandler } from "react";
 
-export const MAX_COMMENT_LENGTH = 20;
+export const MAX_COMMENT_LENGTH = 10;
 
 export default function InputComment(children: {
   comment: string;
