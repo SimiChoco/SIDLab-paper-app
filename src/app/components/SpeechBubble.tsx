@@ -28,14 +28,14 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   };
   return (
     <div
-      className="relative flex bg-gray-200 rounded-lg p-2"
+      className="relative flex bg-gray-50 rounded-lg p-2"
       style={{ display: comment ? "true" : "false", marginRight: "8px" }}
     >
       <p className="text-sm text-gray-800">{comment}</p>
-      <div className="absolute top-1/2 -translate-y-1/2 left-[-8px] w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-200"></div>
+      <div className="absolute top-1/2 -translate-y-1/2 left-[-8px] w-0 h-0 border-t-8 border-t-transparent border-b-8 border-b-transparent border-r-8 border-r-gray-50"></div>
       <button
         onClick={handleLikedPressed}
-        className="flex items-center gap-1 text-gray-500 ml-4 p-0"
+        className="flex items-center gap-1 text-gray-50 ml-4 p-0"
       >
         <svg
           width="20"
@@ -49,7 +49,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
             fill="#FFDB5E"
           />
         </svg>
-        <span color="#FFDB5E" className="text-sm font-medium">
+        <span color="#FFDB5E" className="text-sm font-medium text-amber-200">
           {tmpLikedNum}
         </span>
       </button>
