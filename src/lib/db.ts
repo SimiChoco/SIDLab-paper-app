@@ -101,10 +101,16 @@ export async function getAllUsers() {
   const q = query(usersRef, orderBy("name"));
   const querySnapshot = await getDocs(q);
 
-  return querySnapshot.docs.map((doc) => ({
-    id: doc.id,
-    name: doc.data().name,
-  }));
+  return querySnapshot.docs.map((doc) => {
+    validateAndConvertUser(doc);
+
+    return {
+      id: doc.id,
+      name: doc.data().name,
+      comment: doc.data().comment,
+      likedNum: doc.data().likedNum,
+    };
+  });
 }
 
 // Log progress (Absolute page count)
@@ -112,14 +118,16 @@ export async function addReadingLog(
   userId: string,
   userName: string,
   currentTotalPages: number,
+  likedNum: number,
   comment: string
 ) {
   // 1. Add Log (Recording the milestone reached)
   await addDoc(collection(db, LOGS_COLLECTION), {
     userId,
     userName,
-    pages: currentTotalPages, // NOW REPRESENTS "REACHED PAGE X"
+    pages: currentTotalPages,
     comment: comment,
+    likedNum: likedNum,
     createdAt: serverTimestamp(),
   });
 
@@ -128,6 +136,7 @@ export async function addReadingLog(
   await updateDoc(userRef, {
     totalPages: currentTotalPages,
     comment: comment,
+    likedNum: 0,
     updatedAt: serverTimestamp(),
   });
 }

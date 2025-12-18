@@ -6,7 +6,12 @@ import { getAllUsers, addReadingLog } from "@/lib/db";
 import Link from "next/link";
 import InputComment, { MAX_COMMENT_LENGTH } from "../components/InputComment";
 
-type UserOption = { id: string; name: string };
+type UserOption = {
+  id: string;
+  name: string;
+  comment: string;
+  likedNum: number;
+};
 
 export default function LogPage() {
   const router = useRouter();
@@ -65,6 +70,7 @@ export default function LogPage() {
         selectedUserId,
         selectedUser.name,
         pageCount,
+        selectedUser.likedNum,
         comment
       );
       router.push(`/log/success?pages=${pageCount}`);
