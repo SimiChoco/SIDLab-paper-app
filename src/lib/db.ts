@@ -89,7 +89,7 @@ export async function createUser(name: string, comment: string) {
     name,
     totalPages: 0,
     comment: comment,
-    likedNum: [],
+    likedNum: 0,
     updatedAt: serverTimestamp(),
   });
   return newUserRef.id;
