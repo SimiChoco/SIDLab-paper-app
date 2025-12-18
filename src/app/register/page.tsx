@@ -4,9 +4,7 @@ import { useState } from "react";
 import { createUser } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import InputComment from "../components/InputComment";
-
-const MAX_COMMENT_LENGTH = 40;
+import InputComment, { MAX_COMMENT_LENGTH } from "../components/InputComment";
 
 export default function RegisterPage() {
   const router = useRouter();
@@ -73,7 +71,6 @@ export default function RegisterPage() {
             comment={comment}
             onChange={handleCommentChange}
             placeholder={"みんなにあいさつしよう！"}
-            maxCommentLength={MAX_COMMENT_LENGTH}
           />
 
           <button
