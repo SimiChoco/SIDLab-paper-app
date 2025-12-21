@@ -26,9 +26,7 @@ export default function LogPage() {
   const [error, setError] = useState<string | null>(null);
 
   const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= MAX_COMMENT_LENGTH) {
-      setComment(e.target.value);
-    }
+    setComment(e.target.value);
   };
 
   useEffect(() => {
@@ -57,14 +55,20 @@ export default function LogPage() {
       return;
     }
 
-    try {
-      const pageCount = parseInt(pages, 10);
-      if (isNaN(pageCount) || pageCount < 0) {
-        alert("正しいページ数を入力してください。");
-        setSubmitting(false);
-        return;
-      }
+    if (comment.length > MAX_COMMENT_LENGTH) {
+      setError(`コメントは${MAX_COMMENT_LENGTH}文字以内で入力してください。`);
+      setSubmitting(false);
+      return;
+    }
 
+    const pageCount = parseInt(pages, 10);
+    if (isNaN(pageCount) || pageCount < 0) {
+      alert("正しいページ数を入力してください。");
+      setSubmitting(false);
+      return;
+    }
+
+    try {
       const selectedUser = users.find((u) => u.id === selectedUserId);
       if (!selectedUser) throw new Error("User mismatch");
 
