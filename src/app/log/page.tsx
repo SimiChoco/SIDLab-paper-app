@@ -4,7 +4,9 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { getAllUsers, addReadingLog } from "@/lib/db";
 import Link from "next/link";
-import InputComment, { MAX_COMMENT_LENGTH } from "../components/InputComment";
+import InputComment from "../components/InputComment";
+
+const MAX_COMMENT_LENGTH = 10;
 
 type UserOption = {
   id: string;
@@ -147,6 +149,7 @@ export default function LogPage() {
           <InputComment
             comment={comment}
             onChange={handleCommentChange}
+            maxLength={MAX_COMMENT_LENGTH}
             placeholder="今の気持ちを記録しよう！"
           />
 
