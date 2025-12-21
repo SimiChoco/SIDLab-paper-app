@@ -127,7 +127,7 @@ export async function addReadingLog(
     userName,
     pages: currentTotalPages,
     comment: comment,
-    likedNum: likedNum,
+    likedNum: likedNum === undefined ? 0 : likedNum,
     createdAt: serverTimestamp(),
   });
 
