@@ -76,7 +76,7 @@ export async function updateReadingLog(logId: string, newPages: number) {
 }
 
 // Create a new user
-export async function createUser(name: string, comment: string) {
+export async function createUser(name: string) {
   const usersRef = collection(db, USERS_COLLECTION);
   const q = query(usersRef, where("name", "==", name));
   const querySnapshot = await getDocs(q);
@@ -88,8 +88,6 @@ export async function createUser(name: string, comment: string) {
   const newUserRef = await addDoc(usersRef, {
     name,
     totalPages: 0,
-    comment: comment,
-    likedNum: 0,
     updatedAt: serverTimestamp(),
   });
   return newUserRef.id;
@@ -177,55 +175,29 @@ export async function getRecentLogs(): Promise<ReadingLog[]> {
   });
 }
 
-export async function addLiked(targetDb: "Users" | "ReadingLog", id: string) {
-  console.log(targetDb);
-  if (targetDb == "Users") {
-    try {
-      console.log("Users selected");
-      await runTransaction(db, async (transaction) => {
-        const userRef = doc(db, USERS_COLLECTION, id);
-        const userDoc = await transaction.get(userRef);
-        if (!userDoc.exists()) {
-          throw new Error("User not found!");
-        }
+export async function addLiked(id: string) {
+  try {
+    console.log("ReadingLog selected");
+    await runTransaction(db, async (transaction) => {
+      const logRef = doc(db, LOGS_COLLECTION, id);
+      const logDoc = await transaction.get(logRef);
+      console.log(id);
+      console.log(logDoc);
+      if (!logDoc.exists()) {
+        throw new Error("Log not found!");
+      }
 
-        const userData = validateAndConvertUser(userDoc);
+      const logData = validateAndConvertReadingLog(logDoc);
 
-        const likedNum = userData.likedNum;
+      const likedNum = logData.likedNum;
 
-        transaction.update(userRef, {
-          likedNum: likedNum + 1,
-        });
+      transaction.update(logRef, {
+        likedNum: likedNum + 1,
       });
-      console.log("Add liked successfully committed!");
-    } catch (e) {
-      console.log("Add liked failed: ", e);
-      throw e;
-    }
-  } else if (targetDb == "ReadingLog") {
-    try {
-      console.log("ReadingLog selected");
-      await runTransaction(db, async (transaction) => {
-        const logRef = doc(db, LOGS_COLLECTION, id);
-        const logDoc = await transaction.get(logRef);
-        console.log(id);
-        console.log(logDoc);
-        if (!logDoc.exists()) {
-          throw new Error("Log not found!");
-        }
-
-        const logData = validateAndConvertReadingLog(logDoc);
-
-        const likedNum = logData.likedNum;
-
-        transaction.update(logRef, {
-          likedNum: likedNum + 1,
-        });
-      });
-      console.log("Add liked successfully committed!");
-    } catch (e) {
-      console.log("Add liked failed: ", e);
-      throw e;
-    }
+    });
+    console.log("Add liked successfully committed!");
+  } catch (e) {
+    console.log("Add liked failed: ", e);
+    throw e;
   }
 }

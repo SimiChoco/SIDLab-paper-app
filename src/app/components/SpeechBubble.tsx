@@ -6,14 +6,12 @@ import React, { useState } from "react";
 type SpeechBubbleProps = {
   comment: string;
   likedNum: number;
-  targetDb: "Users" | "ReadingLog";
   id: string;
 };
 
 const SpeechBubble: React.FC<SpeechBubbleProps> = ({
   comment,
   likedNum,
-  targetDb,
   id,
 }) => {
   const [liked, setLiked] = useState(false);
@@ -23,7 +21,7 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
       setLiked(true);
       console.log(typeof tmpLikedNum);
       setTmpLikedNum((prevTmpLikeNum) => prevTmpLikeNum + 1);
-      addLiked(targetDb, id);
+      addLiked(id);
     }
   };
   return (
