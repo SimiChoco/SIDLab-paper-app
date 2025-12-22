@@ -4,8 +4,6 @@ export interface User {
   id: string;
   name: string;
   totalPages: number;
-  comment: string;
-  likedNum: number;
   updatedAt: Date;
 }
 
@@ -43,8 +41,6 @@ export function validateAndConvertUser(doc: DocumentSnapshot): User {
     id: doc.id,
     name: data.name,
     totalPages: data.totalPages,
-    comment: data.comment || "",
-    likedNum: data.likedNum || 0,
     updatedAt: data.updatedAt.toDate(),
   };
 }

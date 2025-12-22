@@ -2,7 +2,7 @@ import {
   validateAndConvertUser,
   validateAndConvertReadingLog,
 } from "@/lib/types";
-import { USERS_COLLECTION, LOGS_COLLECTION, db, addLiked } from "@/lib/db";
+import { USERS_COLLECTION, LOGS_COLLECTION, db } from "@/lib/db";
 import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import DeleteUserSection from "./components/DeleteUserSection";
@@ -89,14 +89,6 @@ export default async function ThesisProgress() {
                       <span className="text-gray-900 font-medium text-sm">
                         {user.name}
                       </span>
-                      {user.comment && (
-                        <SpeechBubble
-                          comment={user.comment}
-                          likedNum={user.likedNum}
-                          targetDb={"Users"}
-                          id={user.id}
-                        />
-                      )}
                     </div>
                     <div className="text-gray-900 font-semibold text-sm">
                       {user.totalPages}{" "}
@@ -151,7 +143,6 @@ export default async function ThesisProgress() {
                         <SpeechBubble
                           comment={log.comment}
                           likedNum={log.likedNum}
-                          targetDb={"ReadingLog"}
                           id={log.id}
                         />
                       )}

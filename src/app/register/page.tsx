@@ -4,20 +4,12 @@ import { useState } from "react";
 import { createUser } from "@/lib/db";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
-import InputComment, { MAX_COMMENT_LENGTH } from "../components/InputComment";
 
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [comment, setComment] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-
-  const handleCommentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= MAX_COMMENT_LENGTH) {
-      setComment(e.target.value);
-    }
-  };
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -25,7 +17,7 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      await createUser(name, comment);
+      await createUser(name);
       alert("登録しました！");
       window.location.href = "/";
     } catch (error: any) {
@@ -67,11 +59,6 @@ export default function RegisterPage() {
               placeholder="名前を入力"
             />
           </div>
-          <InputComment
-            comment={comment}
-            onChange={handleCommentChange}
-            placeholder={"みんなにあいさつしよう！"}
-          />
 
           <button
             type="submit"
