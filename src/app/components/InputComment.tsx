@@ -2,11 +2,10 @@
 
 import { ChangeEventHandler } from "react";
 
-export const MAX_COMMENT_LENGTH = 10;
-
-export default function InputComment(children: {
+export default function InputComment(props: {
   comment: string;
   onChange: ChangeEventHandler<HTMLTextAreaElement>;
+  maxLength: number;
   placeholder: string;
 }) {
   return (
@@ -19,15 +18,15 @@ export default function InputComment(children: {
           コメント
         </label>
         <span className="text-sm text-gray-500">
-          {children.comment.length}/{MAX_COMMENT_LENGTH}
+          {props.comment.length}/{props.maxLength}
         </span>
       </div>
       <textarea
         id="comment"
-        value={children.comment}
-        onChange={children.onChange}
+        value={props.comment}
+        onChange={props.onChange}
         className="input-field"
-        placeholder={children.placeholder}
+        placeholder={props.placeholder}
         rows={3}
       />
     </div>
