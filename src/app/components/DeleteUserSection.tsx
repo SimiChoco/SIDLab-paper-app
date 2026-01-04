@@ -43,6 +43,10 @@ export default function DeleteUserSection({ users }: { users: User[] }) {
                 <a href="/settings" className="hover:text-gray-600 hover:underline transition">
                     設定
                 </a>
+                <span>|</span>
+                <a href="/dashboard" className="hover:text-gray-600 hover:underline transition">
+                    ダッシュボード
+                </a>
             </div>
 
             {showDeleteModal && (
