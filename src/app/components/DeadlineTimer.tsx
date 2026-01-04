@@ -18,9 +18,15 @@ export default function DeadlineTimer() {
   useEffect(() => {
     const calculateTimeLeft = () => {
       const now = new Date();
-      // 2026 deadlines (12:00 noon)
-      const undergradDeadline = new Date("2026-01-30T12:00:00");
-      const masterDeadline = new Date("2026-02-02T12:00:00");
+      
+      // Load deadlines from localStorage or use defaults
+      const savedUndergrad = typeof window !== 'undefined' ? localStorage.getItem("deadline_undergrad") : null;
+      const savedMaster = typeof window !== 'undefined' ? localStorage.getItem("deadline_master") : null;
+
+      // 2026-01-30 12:00 (Default)
+      const undergradDeadline = savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00");
+      // 2026-02-02 12:00 (Default)
+      const masterDeadline = savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00");
 
       const getDiff = (deadline: Date): TimeLeft => {
         const diff = deadline.getTime() - now.getTime();
@@ -55,17 +61,29 @@ export default function DeadlineTimer() {
     );
   }
 
+  // Format date for display: "1/30 12:00"
+  const formatDate = (date: Date) => {
+    return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
+  };
+
+  // Get current deadlines for display
+  const savedUndergrad = typeof window !== 'undefined' ? localStorage.getItem("deadline_undergrad") : null;
+  const savedMaster = typeof window !== 'undefined' ? localStorage.getItem("deadline_master") : null;
+  
+  const undergradDate = savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00");
+  const masterDate = savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00");
+
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-2 sm:gap-4 w-full">
       <TimerCard 
         title="卒業論文締切" 
-        date="1/30 12:00" 
+        date={formatDate(undergradDate)}
         data={timeLeft.undergrad} 
         icon="🎓"
       />
       <TimerCard 
         title="修士論文締切" 
-        date="2/2 12:00" 
+        date={formatDate(masterDate)}
         data={timeLeft.master} 
         icon="📜"
       />
