@@ -49,7 +49,7 @@ export default async function ThesisProgress() {
               進捗管理君
             </h1>
             <p className="text-[10px] sm:text-xs text-gray-500 font-serif">
-              Simple Thesis Tracker
+              Sidlab Paper Tracker
             </p>
           </div>
           <div className="flex gap-2">
