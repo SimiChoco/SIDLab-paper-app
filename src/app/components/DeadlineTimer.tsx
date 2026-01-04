@@ -61,14 +61,12 @@ export default function DeadlineTimer() {
         title="卒業論文締切" 
         date="1/30 12:00" 
         data={timeLeft.undergrad} 
-        colorClass="bg-indigo-500"
         icon="🎓"
       />
       <TimerCard 
         title="修士論文締切" 
         date="2/2 12:00" 
         data={timeLeft.master} 
-        colorClass="bg-pink-500"
         icon="📜"
       />
     </div>
@@ -78,13 +76,13 @@ export default function DeadlineTimer() {
 const TimeUnit = ({ value, label }: { value: number; label: string }) => (
   <div className="flex flex-col items-center justify-center min-w-[20px] sm:min-w-[48px]">
     <div 
-      className="text-sm sm:text-3xl font-bold tabular-nums leading-none text-gray-900 text-center"
+      className="text-sm sm:text-3xl font-bold tabular-nums leading-none text-red-600 text-center"
       style={{ fontFamily: "'Cinzel', serif" }}
     >
       {value.toString().padStart(2, '0')}
     </div>
     <div 
-      className="text-[6px] sm:text-[10px] font-medium text-gray-500 mt-0.5 uppercase tracking-tight sm:tracking-widest"
+      className="text-[6px] sm:text-[10px] font-medium text-red-400 mt-0.5 uppercase tracking-tight sm:tracking-widest"
       style={{ fontFamily: "'Cinzel', serif" }}
     >
       {label}
@@ -93,20 +91,18 @@ const TimeUnit = ({ value, label }: { value: number; label: string }) => (
 );
 
 const Separator = () => (
-  <div className="text-gray-300 font-light text-[10px] sm:text-xl -mt-0.5 sm:-mt-4 font-serif mx-0">:</div>
+  <div className="text-red-300 font-light text-[10px] sm:text-xl -mt-0.5 sm:-mt-4 font-serif mx-0">:</div>
 );
 
 const TimerCard = ({ 
   title, 
   date, 
   data, 
-  colorClass,
   icon
 }: { 
   title: string; 
   date: string; 
   data: TimeLeft; 
-  colorClass: string;
   icon: string;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -145,7 +141,7 @@ const TimerCard = ({
   return (
     <div 
       ref={containerRef}
-      className="px-2 py-1.5 sm:px-5 sm:py-3 relative group transition-all duration-300 hover:shadow-md bg-[#fdfbf7] border sm:border-[3px] border-double border-gray-300 rounded-lg flex items-center justify-between gap-1 sm:gap-4 overflow-hidden"
+      className="px-2 py-1.5 sm:px-5 sm:py-3 relative group bg-[#fdfbf7] border sm:border-[3px] border-double border-amber-800 flex items-center justify-between gap-1 sm:gap-4 overflow-hidden"
     >
       {/* Hidden measurement div - always contains seconds for width calculation */}
       <div 
@@ -156,7 +152,7 @@ const TimerCard = ({
         <div className="flex items-center gap-1 sm:gap-4 shrink-0">
           <div className={`hidden sm:block text-2xl`}>🎓</div>
           <div className="flex flex-col items-start">
-            <h3 className="text-[8px] sm:text-sm font-bold tracking-wide sm:tracking-widest uppercase whitespace-nowrap">{title}</h3>
+            <h3 className="text-[8px] sm:text-sm font-bold tracking-wide sm:tracking-widest uppercase whitespace-nowrap text-gray-900">{title}</h3>
           </div>
         </div>
         <div className="flex items-center pl-1 sm:pl-4 ml-0.5 sm:ml-2 shrink-0">
@@ -171,28 +167,33 @@ const TimerCard = ({
       </div>
 
       {/* Corner Accents */}
-      <div className={`absolute top-0.5 left-0.5 w-1 h-1 sm:w-2 sm:h-2 border-t border-l border-${colorClass.replace('bg-', '')}-400 opacity-50`} />
-      <div className={`absolute bottom-0.5 right-0.5 w-1 h-1 sm:w-2 sm:h-2 border-b border-r border-${colorClass.replace('bg-', '')}-400 opacity-50`} />
+      <div className="absolute top-0.5 left-0.5 w-1 h-1 sm:w-2 sm:h-2 border-t border-l border-amber-800 opacity-60" />
+      <div className="absolute top-0.5 right-0.5 w-1 h-1 sm:w-2 sm:h-2 border-t border-r border-amber-800 opacity-60" />
+      <div className="absolute bottom-0.5 left-0.5 w-1 h-1 sm:w-2 sm:h-2 border-b border-l border-amber-800 opacity-60" />
+      <div className="absolute bottom-0.5 right-0.5 w-1 h-1 sm:w-2 sm:h-2 border-b border-r border-amber-800 opacity-60" />
 
-      <div className="flex items-center gap-1 sm:gap-4 shrink-0">
+      <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1">
         {/* Icon hidden on mobile */}
-        <div className={`hidden sm:block text-2xl ${colorClass.replace('bg-', 'text-')}`}>
+        <div className="hidden sm:block text-2xl text-gray-900">
           {icon}
         </div>
-        <div className="flex flex-col items-start">
+        <div className="flex flex-col items-start min-w-0">
           <h3 
-            className="text-[8px] sm:text-sm font-bold text-gray-700 tracking-wide sm:tracking-widest uppercase border-b border-gray-200 pb-0.5 leading-none whitespace-nowrap"
+            className="text-[10px] sm:text-sm font-bold text-gray-900 tracking-wide sm:tracking-widest uppercase border-b border-gray-900 pb-0.5 leading-none whitespace-nowrap"
             style={{ fontFamily: "'Cinzel', serif" }}
           >
             {title}
           </h3>
-          <span className="hidden sm:block text-[10px] font-semibold text-gray-400 tracking-wider font-serif opacity-70 mt-0.5">
+          <span 
+            className="hidden sm:block text-[10px] font-semibold tracking-wider font-serif opacity-90 mt-0.5"
+            style={{ color: 'rgb(120, 95, 35)' }}
+          >
             DEADLINE: {date}
           </span>
         </div>
       </div>
 
-      <div className="flex items-center justify-center pl-1 sm:pl-4 border-l border-gray-200/50 border-dashed ml-0.5 sm:ml-2 shrink-0">
+      <div className="flex items-center justify-center pl-2 sm:pl-4 border-l border-gray-900 border-dashed ml-1 sm:ml-2 shrink-0">
         <TimeUnit value={data.days} label="Day" />
         <Separator />
         <TimeUnit value={data.hours} label="Hour" />
