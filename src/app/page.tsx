@@ -74,10 +74,9 @@ export default async function ThesisProgress() {
           {/* Ranking Card */}
           <section className="card p-6 border-t-4 border-blue-500">
             <h2 
-              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
-              style={{ fontFamily: "'Cinzel', serif" }}
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2 font-serif"
             >
-              🏆 Mirror of Analysis
+              🏆 現在のランキング
             </h2>
             <div className="space-y-0 divide-y divide-gray-100">
               {ranking.length === 0 ? (
@@ -119,10 +118,9 @@ export default async function ThesisProgress() {
           {/* Recent Activity Card */}
           <section className="card p-6 border-t-4 border-pink-500">
             <h2 
-              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
-              style={{ fontFamily: "'Cinzel', serif" }}
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2 font-serif"
             >
-              📝 Chronicle of Progress
+              📝 最新の更新
             </h2>
             <div className="space-y-0 divide-y divide-gray-100">
               {recentLogs.length === 0 ? (
