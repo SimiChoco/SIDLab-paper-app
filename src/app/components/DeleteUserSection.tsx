@@ -32,13 +32,17 @@ export default function DeleteUserSection({ users }: { users: User[] }) {
 
     return (
         <div className="pt-8 border-t border-gray-200 mt-8">
-            <div className="flex justify-center">
+            <div className="flex justify-center items-center gap-6 text-xs text-gray-400">
                 <button
                     onClick={() => setShowDeleteModal(!showDeleteModal)}
-                    className="text-gray-400 hover:text-red-600 text-xs hover:underline transition"
+                    className="hover:text-red-600 hover:underline transition"
                 >
                     {showDeleteModal ? "キャンセル" : "ユーザー管理（削除）"}
                 </button>
+                <span>|</span>
+                <a href="/settings" className="hover:text-gray-600 hover:underline transition">
+                    設定
+                </a>
             </div>
 
             {showDeleteModal && (
