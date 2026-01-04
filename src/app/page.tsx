@@ -55,17 +55,15 @@ export default async function ThesisProgress() {
           <div className="flex gap-2">
             <Link
               href="/register"
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-medium shadow-sm active:bg-blue-700"
-              style={{ fontFamily: "'Cinzel', serif" }}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold font-serif shadow-sm active:bg-blue-700"
             >
-              Register
+              新規登録
             </Link>
             <Link 
               href="/log" 
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-medium shadow-sm active:bg-gray-50"
-              style={{ fontFamily: "'Cinzel', serif" }}
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-bold font-serif shadow-sm active:bg-gray-50"
             >
-              Log Progress
+              進捗記録
             </Link>
           </div>
         </header>
@@ -102,7 +100,7 @@ export default async function ThesisProgress() {
                       >
                         {index + 1}
                       </span>
-                      <span className="text-gray-900 font-medium text-sm" style={{ fontFamily: "'Cinzel', serif" }}>
+                      <span className="text-gray-900 font-bold text-sm tracking-wide" style={{ fontFamily: "'Cinzel', serif" }}>
                         {user.name}
                       </span>
                     </div>
@@ -139,11 +137,11 @@ export default async function ThesisProgress() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 text-sm" style={{ fontFamily: "'Cinzel', serif" }}>
+                        <span className="font-bold text-gray-900 text-sm tracking-wide" style={{ fontFamily: "'Cinzel', serif" }}>
                           {log.userName}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-400">
+                      <span className="text-xs text-gray-400 font-serif">
                         {log.createdAt.toLocaleDateString("ja-JP", {
                           year: "numeric",
                           month: "2-digit",
@@ -152,11 +150,11 @@ export default async function ThesisProgress() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-sm text-gray-600">
-                        <span className="font-semibold text-blue-600">
-                          {log.pages}ページ
+                      <p className="text-sm text-gray-700 font-serif">
+                        <span className="font-bold text-blue-600 text-base" style={{ fontFamily: "'Cinzel', serif" }}>
+                          {log.pages}
                         </span>{" "}
-                        に到達しました。
+                        ページに到達しました。
                       </p>
                       {log.comment && (
                         <SpeechBubble
