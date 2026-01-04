@@ -98,7 +98,7 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
 const TimeUnit = ({ value, label, theme }: { value: number; label: string; theme: TimerTheme }) => (
   <div className="flex flex-col items-center justify-center min-w-[20px] sm:min-w-[48px]">
     <div 
-      className={`text-sm sm:text-3xl font-bold tabular-nums leading-none text-center ${theme === 'paper' ? 'text-red-600' : 'text-[#c5a059] drop-shadow-[0_0_8px_rgba(197,160,89,0.5)]'}`}
+      className={`text-sm sm:text-3xl font-bold tabular-nums leading-none text-center ${theme === 'paper' ? 'text-red-600' : 'text-[#ff4444] drop-shadow-[0_0_8px_rgba(255,68,68,0.5)]'}`}
       style={{ fontFamily: "'Cinzel', serif" }}
     >
       {value.toString().padStart(2, '0')}
@@ -219,14 +219,11 @@ const TimerCard = ({
       <div className={`absolute bottom-0.5 right-0.5 w-1 h-1 sm:w-2 sm:h-2 border-b border-r ${styles.accent} ${theme === 'dark' ? 'opacity-100 drop-shadow-[0_0_2px_rgba(197,160,89,0.8)]' : 'opacity-60'}`} />
 
       {/* Fantasy specific decorations */}
-      {theme === 'dark' && (
         <>
            <div className="absolute inset-px border border-[#c5a059] opacity-30 m-0.5 pointer-events-none" />
            <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-[#c5a059]/10 to-transparent opacity-20 blur-sm pointer-events-none" />
-           {/* Decorative flourish lines */}
-           <div className="absolute top-1/2 left-2 right-2 h-[1px] bg-gradient-to-r from-transparent via-[#c5a059]/30 to-transparent pointer-events-none" />
+           {/* Decorative flourish lines - Removed as requested */}
         </>
-      )}
 
       <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 z-10">
         {/* Icon hidden on mobile */}
