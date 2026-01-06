@@ -44,24 +44,23 @@ export default async function ThesisProgress() {
           <div>
             <h1 
               className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight"
-              style={{ fontFamily: "'Cinzel', serif" }}
             >
               進捗管理君
             </h1>
-            <p className="text-[10px] sm:text-xs text-gray-500 font-serif">
+            <p className="text-[10px] sm:text-xs text-gray-500">
               Sidlab Paper Tracker
             </p>
           </div>
           <div className="flex gap-2">
             <Link
               href="/register"
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold font-serif shadow-sm active:bg-blue-700"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold shadow-sm active:bg-blue-700"
             >
               新規登録
             </Link>
             <Link 
               href="/log" 
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-bold font-serif shadow-sm active:bg-gray-50"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-bold shadow-sm active:bg-gray-50"
             >
               進捗記録
             </Link>
@@ -74,7 +73,7 @@ export default async function ThesisProgress() {
           {/* Ranking Card */}
           <section className="card p-6 border-t-4 border-blue-500">
             <h2 
-              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2 font-serif"
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
             >
               🏆 現在のランキング
             </h2>
@@ -99,7 +98,7 @@ export default async function ThesisProgress() {
                       >
                         {index + 1}
                       </span>
-                      <span className="text-gray-900 font-bold text-sm tracking-wide" style={{ fontFamily: "'Cinzel', serif" }}>
+                      <span className="text-gray-900 font-bold text-sm tracking-wide">
                         {user.name}
                       </span>
                     </div>
@@ -118,7 +117,7 @@ export default async function ThesisProgress() {
           {/* Recent Activity Card */}
           <section className="card p-6 border-t-4 border-pink-500">
             <h2 
-              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2 font-serif"
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
             >
               📝 最新の更新
             </h2>
@@ -135,11 +134,11 @@ export default async function ThesisProgress() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <span className="font-bold text-gray-900 text-sm tracking-wide" style={{ fontFamily: "'Cinzel', serif" }}>
+                        <span className="font-bold text-gray-900 text-sm tracking-wide">
                           {log.userName}
                         </span>
                       </div>
-                      <span className="text-xs text-gray-400 font-serif">
+                      <span className="text-xs text-gray-400">
                         {log.createdAt.toLocaleDateString("ja-JP", {
                           year: "numeric",
                           month: "2-digit",
@@ -148,8 +147,8 @@ export default async function ThesisProgress() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-sm text-gray-700 font-serif">
-                        <span className="font-bold text-blue-600 text-base" style={{ fontFamily: "'Cinzel', serif" }}>
+                      <p className="text-sm text-gray-700">
+                        <span className="font-bold text-blue-600 text-base">
                           {log.pages}
                         </span>{" "}
                         ページに到達しました。
