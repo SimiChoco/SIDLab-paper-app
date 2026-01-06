@@ -47,7 +47,10 @@ const SpeechBubble: React.FC<SpeechBubbleProps> = ({
             fill="#FFDB5E"
           />
         </svg>
-        <span color="#FFDB5E" className="text-sm font-medium text-amber-200">
+        <span 
+          color="#FFDB5E" 
+          className="text-sm font-bold text-amber-200"
+        >
           {tmpLikedNum}
         </span>
       </button>

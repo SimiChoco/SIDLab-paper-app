@@ -7,6 +7,7 @@ import { collection, query, orderBy, limit, getDocs } from "firebase/firestore";
 import Link from "next/link";
 import DeleteUserSection from "./components/DeleteUserSection";
 import SpeechBubble from "./components/SpeechBubble";
+import DeadlineTimer from "./components/DeadlineTimer";
 
 // Server-side data fetching helper
 async function getData() {
@@ -36,33 +37,44 @@ export const dynamic = "force-dynamic";
 export default async function ThesisProgress() {
   const { ranking, recentLogs } = await getData();
   return (
-    <main className="min-h-screen p-6 font-sans bg-gray-50">
-      <div className="max-w-5xl mx-auto space-y-8">
+    <main className="min-h-screen p-3 sm:p-6 font-sans bg-gray-50">
+      <div className="max-w-5xl mx-auto space-y-3 sm:space-y-6">
         {/* Header Section */}
-        <header className="flex flex-col md:flex-row justify-between items-center gap-4 border-b border-gray-200 pb-6">
+        <header className="flex flex-row justify-between items-center gap-2 border-b border-gray-200 pb-2 sm:pb-4">
           <div>
-            <h1 className="text-2xl font-bold text-gray-900">進捗管理君</h1>
-            <p className="text-sm text-gray-500 mt-1">
-              Simple Thesis Progress Tracker
+            <h1 
+              className="text-lg sm:text-2xl font-bold text-gray-900 leading-tight"
+            >
+              進捗管理君
+            </h1>
+            <p className="text-[10px] sm:text-xs text-gray-500">
+              SIDLab Paper Tracker
             </p>
           </div>
-          <div className="flex gap-3">
+          <div className="flex gap-2">
             <Link
               href="/register"
-              className="btn btn-primary text-sm shadow-sm"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold shadow-sm active:bg-blue-700"
             >
               新規登録
             </Link>
-            <Link href="/log" className="btn btn-secondary text-sm shadow-sm">
-              進捗を記録
+            <Link 
+              href="/log" 
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-white border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-bold shadow-sm active:bg-gray-50"
+            >
+              進捗記録
             </Link>
           </div>
         </header>
 
+        <DeadlineTimer />
+
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {/* Ranking Card */}
-          <section className="card p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+          <section className="card p-6 border-t-4 border-blue-500">
+            <h2 
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
+            >
               🏆 現在のランキング
             </h2>
             <div className="space-y-0 divide-y divide-gray-100">
@@ -86,7 +98,7 @@ export default async function ThesisProgress() {
                       >
                         {index + 1}
                       </span>
-                      <span className="text-gray-900 font-medium text-sm">
+                      <span className="text-gray-900 font-bold text-sm tracking-wide">
                         {user.name}
                       </span>
                     </div>
@@ -103,8 +115,10 @@ export default async function ThesisProgress() {
           </section>
 
           {/* Recent Activity Card */}
-          <section className="card p-6">
-            <h2 className="text-lg font-semibold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2">
+          <section className="card p-6 border-t-4 border-pink-500">
+            <h2 
+              className="text-lg font-bold text-gray-900 mb-4 pb-2 border-b border-gray-100 flex items-center gap-2"
+            >
               📝 最新の更新
             </h2>
             <div className="space-y-0 divide-y divide-gray-100">
@@ -120,7 +134,7 @@ export default async function ThesisProgress() {
                   >
                     <div className="flex justify-between items-center">
                       <div className="flex items-center gap-2">
-                        <span className="font-medium text-gray-900 text-sm">
+                        <span className="font-bold text-gray-900 text-sm tracking-wide">
                           {log.userName}
                         </span>
                       </div>
@@ -133,11 +147,11 @@ export default async function ThesisProgress() {
                       </span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <p className="text-sm text-gray-600">
-                        <span className="font-semibold text-blue-600">
-                          {log.pages}ページ
+                      <p className="text-sm text-gray-700">
+                        <span className="font-bold text-blue-600 text-base">
+                          {log.pages}
                         </span>{" "}
-                        に到達しました。
+                        ページに到達しました。
                       </p>
                       {log.comment && (
                         <SpeechBubble
