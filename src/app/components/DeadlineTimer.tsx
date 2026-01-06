@@ -95,22 +95,30 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
   );
 }
 
-const TimeUnit = ({ value, label, theme }: { value: number; label: string; theme: TimerTheme }) => (
-  <div className="flex flex-col items-center justify-center min-w-[20px] sm:min-w-[48px]">
-    <div 
-      className={`text-sm sm:text-3xl font-bold tabular-nums leading-none text-center ${theme === 'paper' ? 'text-red-600' : 'text-[#ff4444] drop-shadow-[0_0_8px_rgba(255,68,68,0.5)]'}`}
-      style={{ fontFamily: "'Cinzel', serif" }}
-    >
-      {value.toString().padStart(2, '0')}
+const TimeUnit = ({ value, label, theme }: { value: number; label: string; theme: TimerTheme }) => {
+  const digits = value.toString().padStart(2, '0').split('');
+
+  return (
+    <div className="flex flex-col items-center justify-center min-w-[20px] sm:min-w-[48px]">
+      <div 
+        className={`flex justify-center text-sm sm:text-3xl font-bold leading-none ${theme === 'paper' ? 'text-red-600' : 'text-[#ff4444] drop-shadow-[0_0_8px_rgba(255,68,68,0.5)]'}`}
+        style={{ fontFamily: "'Cinzel', serif" }}
+      >
+        {digits.map((digit, i) => (
+          <span key={i} className="inline-block w-[0.7em] text-center">
+            {digit}
+          </span>
+        ))}
+      </div>
+      <div 
+        className={`text-[6px] sm:text-[10px] font-medium mt-0.5 uppercase tracking-tight sm:tracking-widest ${theme === 'paper' ? 'text-red-400' : 'text-[#8b7d6b]'}`}
+        style={{ fontFamily: "'Cinzel', serif" }}
+      >
+        {label}
+      </div>
     </div>
-    <div 
-      className={`text-[6px] sm:text-[10px] font-medium mt-0.5 uppercase tracking-tight sm:tracking-widest ${theme === 'paper' ? 'text-red-400' : 'text-[#8b7d6b]'}`}
-      style={{ fontFamily: "'Cinzel', serif" }}
-    >
-      {label}
-    </div>
-  </div>
-);
+  );
+};
 
 const Separator = ({ theme }: { theme: TimerTheme }) => (
   <div className={`font-light text-[10px] sm:text-xl -mt-0.5 sm:-mt-4 font-serif mx-0 ${theme === 'paper' ? 'text-red-300' : 'text-[#c5a059]/50'}`}>:</div>
