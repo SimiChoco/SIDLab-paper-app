@@ -40,10 +40,6 @@ export default function DeleteUserSection({ users }: { users: User[] }) {
                     {showDeleteModal ? "キャンセル" : "ユーザー管理（削除）"}
                 </button>
                 <span>|</span>
-                <a href="/settings" className="hover:text-gray-600 hover:underline transition">
-                    設定
-                </a>
-                <span>|</span>
                 <a href="/dashboard" className="hover:text-gray-600 hover:underline transition">
                     ダッシュボード
                 </a>
