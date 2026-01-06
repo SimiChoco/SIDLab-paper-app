@@ -97,7 +97,7 @@ export default function Dashboard() {
 
       {/* Legal Footer */}
       <footer className={`absolute bottom-2 text-[10px] ${styles.subText} opacity-40 text-center w-full z-50 pointer-events-none`}>
-        ※ Comments are quoted from Twitter. This content is for parody/entertainment purposes only.
+        ※ Comments are quoted from X. This content is for parody/entertainment purposes only.
       </footer>
     </main>
   );
