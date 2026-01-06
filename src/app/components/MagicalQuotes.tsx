@@ -227,10 +227,15 @@ export default function MagicalQuotes({ theme, mode = 'scream' }: { theme: 'dark
       setActiveQuotes((prev) => [...prev, newQuote]);
 
       // Schedule Removal
+      // Calculate max delay for the last character: (length * 0.05) + 0.5
+      // Add a buffer to ensure animation completes fully before unmounting
+      const maxDelay = quoteText.length * 0.05 + 1.0;
+      const totalDuration = (newQuote.duration + maxDelay) * 1000;
+
       setTimeout(() => {
         activeQuotesRef.current = activeQuotesRef.current.filter((q) => q.id !== newQuote.id);
         setActiveQuotes((prev) => prev.filter((q) => q.id !== newQuote.id));
-      }, newQuote.duration * 1000);
+      }, totalDuration);
 
     }, 2500); 
 
@@ -260,7 +265,7 @@ export default function MagicalQuotes({ theme, mode = 'scream' }: { theme: 'dark
           0% { opacity: 0; transform: translate(0, 10px) scale(0.8) blur(4px); }
           10% { opacity: 0.9; transform: translate(0, 0) scale(1) blur(0px); }
           60% { opacity: 0.7; transform: translate(-5px, -15px) scale(1.05) blur(1px) rotate(-1deg); }
-          100% { opacity: 0; transform: translate(-15px, -50px) scale(1.5) blur(12px) rotate(-5deg); filter: hue-rotate(90deg); }
+          100% { opacity: 0; transform: translate(-15px, -50px) scale(1.5) blur(12px) rotate(-5deg); }
         }
         @keyframes smoke-2 {
           0% { opacity: 0; transform: translate(0, 10px) scale(0.8) blur(4px); }
