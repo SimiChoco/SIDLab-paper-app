@@ -26,7 +26,7 @@ const STATUS_CONFIG: Record<number, { label: string; color: string; icon: string
   3: {
     label: "完了",
     color: "bg-[#14532d] text-white border-green-500 shadow-[0_0_15px_rgba(22,163,74,0.4)] hover:bg-[#186336] font-bold",
-    icon: "key" // Key to freedom
+    icon: "sensor_door" // Alternative door
   },
 };
 
@@ -40,7 +40,6 @@ const COLUMNS = [
 export default function StatusPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
-  const [editingUserId, setEditingUserId] = useState<string | null>(null);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -57,8 +56,6 @@ export default function StatusPage() {
   }, []);
 
   const handleStatusClick = async (user: User, field: keyof User) => {
-    if (editingUserId !== user.id) return;
-
     const currentValue = user[field] as number;
     const newValue = (currentValue + 1) % 4;
 
@@ -143,28 +140,18 @@ export default function StatusPage() {
               {/* Body Rows - Flex column to distribute height */}
               <div className="flex-1 flex flex-col divide-y divide-gray-900 overflow-auto">
                   {users.map((user) => {
-                    const isEditing = editingUserId === user.id;
                     return (
                       <div
                         key={user.id}
-                        className={`flex flex-1 min-h-[50px] transition-colors duration-200 ${
-                            isEditing ? "bg-[#1a1a2e]" : "hover:bg-[#111]"
-                        }`}
+                        className="flex flex-1 min-h-[50px] transition-colors duration-200 hover:bg-[#111]"
                       >
                         <div className="px-4 py-1 font-medium text-white border-r border-gray-800/30 flex-[1.2] flex items-center min-w-[200px]">
-                          <button
-                            onClick={() => setEditingUserId(isEditing ? null : user.id)}
-                            className={`flex items-center gap-2 px-2 py-1.5 w-full text-left rounded transition-all duration-300 group ${
-                              isEditing
-                                ? "text-white shadow-[0_0_10px_rgba(197,160,89,0.2)] bg-[#c5a059]/10 ring-1 ring-[#c5a059]/30"
-                                : "text-gray-200 hover:text-white"
-                            }`}
-                          >
-                            <span className={`material-symbols-outlined text-[18px] transition-transform ${isEditing ? "rotate-90" : "group-hover:rotate-12"}`}>
-                                {isEditing ? "settings" : "person"}
+                          <div className="flex items-center gap-2 px-2 py-1.5 w-full text-left rounded text-gray-200 group">
+                            <span className="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">
+                                person
                             </span>
                             <span className="font-serif tracking-wide text-sm truncate">{user.name}</span>
-                          </button>
+                          </div>
                         </div>
                         {COLUMNS.map((col) => {
                           const status = user[col.key] as number;
@@ -173,23 +160,19 @@ export default function StatusPage() {
                           return (
                             <div key={col.key} className="px-1 py-1 text-center border-r border-gray-800/30 last:border-0 flex-1 min-w-[140px] flex items-center justify-center">
                               <button
-                                disabled={!isEditing}
                                 onClick={() => handleStatusClick(user, col.key)}
                                 className={`
                                   w-full h-[90%] rounded-sm flex items-center justify-center gap-2
                                   transition-all duration-200 border
-                                  ${isEditing
-                                    ? "cursor-pointer active:scale-95 hover:brightness-110"
-                                    : "cursor-default opacity-80"
-                                  }
+                                  cursor-pointer active:scale-95 hover:brightness-110
                                   ${config.color}
                                 `}
                               >
                                 <span className="material-symbols-outlined text-[18px]">
                                   {config.icon}
                                 </span>
-                                <span className="text-[10px] sm:text-xs font-bold hidden xl:inline-block font-serif tracking-tight truncate text-white drop-shadow-md">
-                                   {config.label.split("(")[0]}
+                                <span className="text-[9px] sm:text-[10px] font-bold hidden xl:inline-block font-serif tracking-tight truncate text-white drop-shadow-md">
+                                   {config.label}
                                 </span>
                               </button>
                             </div>
