@@ -70,6 +70,12 @@ export default async function ThesisProgress() {
             >
               進捗記録
             </Link>
+            <Link
+              href="/settings"
+              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-gray-100 border border-gray-200 text-gray-700 rounded text-xs sm:text-sm font-bold shadow-sm hover:bg-gray-200"
+            >
+              ⚙️
+            </Link>
           </div>
         </header>
 

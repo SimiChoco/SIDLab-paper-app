@@ -76,7 +76,7 @@ export async function updateReadingLog(logId: string, newPages: number) {
 }
 
 // Create a new user
-export async function createUser(name: string) {
+export async function createUser(name: string, grade: "B4" | "M2") {
   const usersRef = collection(db, USERS_COLLECTION);
   const q = query(usersRef, where("name", "==", name));
   const querySnapshot = await getDocs(q);
@@ -87,6 +87,7 @@ export async function createUser(name: string) {
 
   const newUserRef = await addDoc(usersRef, {
     name,
+    grade,
     totalPages: 0,
     updatedAt: serverTimestamp(),
     statusWriting: 0,
@@ -204,6 +205,16 @@ export async function updateUserStatus(userId: string, field: string, value: num
   const userRef = doc(db, USERS_COLLECTION, userId);
   await updateDoc(userRef, {
     [field]: value,
+    updatedAt: serverTimestamp(),
+  });
+}
+
+// Update user profile (Name, Grade)
+export async function updateUserProfile(userId: string, name: string, grade: "B4" | "M2") {
+  const userRef = doc(db, USERS_COLLECTION, userId);
+  await updateDoc(userRef, {
+    name,
+    grade,
     updatedAt: serverTimestamp(),
   });
 }

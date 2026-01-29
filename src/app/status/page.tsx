@@ -40,6 +40,7 @@ const COLUMNS = [
 export default function StatusPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
+  const [isB4First, setIsB4First] = useState(true);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -55,6 +56,19 @@ export default function StatusPage() {
     fetchUsers();
   }, []);
 
+  const b4Users = users.filter((u) => u.grade === "B4");
+  const m2Users = users.filter((u) => u.grade === "M2");
+
+  const groups = isB4First
+    ? [
+        { label: "BACHELOR (B4)", users: b4Users, color: "text-blue-400" },
+        { label: "MASTER (M2)", users: m2Users, color: "text-purple-400" },
+      ]
+    : [
+        { label: "MASTER (M2)", users: m2Users, color: "text-purple-400" },
+        { label: "BACHELOR (B4)", users: b4Users, color: "text-blue-400" },
+      ];
+  
   const handleStatusClick = async (user: User, field: keyof User) => {
     const currentValue = user[field] as number;
     const newValue = (currentValue + 1) % 4;
@@ -84,7 +98,6 @@ export default function StatusPage() {
         ></div>
         
 
-
       <div className="flex-1 w-full max-w-[1920px] mx-auto relative z-10 flex flex-col h-full px-4 py-2 sm:px-6">
         <header className="flex flex-shrink-0 items-center justify-between border-b border-gray-800/50 pb-2 mb-2 gap-4 relative z-50">
           <div className="flex flex-col">
@@ -105,9 +118,15 @@ export default function StatusPage() {
           </div>
 
           <div>
+              <Link
+                href="/settings"
+                className="mr-2 px-3 py-1.5 bg-gray-900/80 border border-gray-700 text-gray-400 rounded hover:bg-gray-800 hover:text-white transition-all text-xs font-serif tracking-wide inline-flex items-center gap-1 group"
+              >
+                <span className="material-symbols-outlined text-sm">settings</span>
+              </Link>
              <Link
                 href="/"
-                className="px-3 py-1.5 bg-gray-900/80 border border-gray-700 text-gray-400 rounded hover:bg-red-950/30 hover:text-white hover:border-red-900 transition-all text-xs font-serif tracking-wide flex items-center gap-1 group"
+                className="px-3 py-1.5 bg-gray-900/80 border border-gray-700 text-gray-400 rounded hover:bg-red-950/30 hover:text-white hover:border-red-900 transition-all text-xs font-serif tracking-wide inline-flex items-center gap-1 group"
               >
                 <span className="material-symbols-outlined text-sm group-hover:text-red-500 transition-colors">logout</span>
                 <span className="hidden sm:inline">ESCAPE</span>
@@ -127,8 +146,18 @@ export default function StatusPage() {
             <div className="flex-1 overflow-hidden flex flex-col">
               {/* Header Row */}
               <div className="flex-shrink-0 bg-[#0a0a0a] shadow-lg border-b border-gray-800 flex pr-2">
-                  <div className="px-4 py-2 font-bold whitespace-nowrap min-w-[200px] flex-[1.2] tracking-wider font-serif text-white text-2xl flex items-center">
+                  {/* Spacer for Vertical Label */}
+                  <div className="w-8 sm:w-10 bg-[#050505] border-r border-gray-800 flex-shrink-0"></div>
+
+                  <div 
+                    onClick={() => setIsB4First(!isB4First)}
+                    className="px-4 py-2 font-bold whitespace-nowrap min-w-[200px] flex-[1.2] tracking-wider font-serif text-white text-2xl flex items-center gap-2 cursor-pointer hover:text-[#c5a059] transition-colors select-none group"
+                    title="Toggle Sort Order (B4/M2)"
+                  >
                     PRISONER
+                    <span className="material-symbols-outlined text-sm opacity-50 group-hover:opacity-100 transition-opacity">
+                      {isB4First ? "expand_more" : "expand_less"}
+                    </span>
                   </div>
                   {COLUMNS.map((col) => (
                     <div key={col.key} className="px-2 py-2 font-normal whitespace-nowrap text-center flex-1 min-w-[140px] tracking-wider font-serif text-gray-200 text-2xl flex items-center justify-center">
@@ -138,56 +167,86 @@ export default function StatusPage() {
               </div>
 
               {/* Body Rows - Flex column to distribute height */}
-              <div className="flex-1 flex flex-col divide-y divide-gray-900 overflow-auto">
-                  {users.map((user) => {
-                    return (
-                      <div
-                        key={user.id}
-                        className="flex flex-1 min-h-[50px] transition-colors duration-200 hover:bg-[#111]"
-                      >
-                        <div className="px-4 py-1 font-medium text-white border-r border-gray-800/30 flex-[1.2] flex items-center min-w-[200px]">
-                          <div className="flex items-center gap-2 px-2 py-1.5 w-full text-left rounded text-gray-200 group">
-                            <span className="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">
-                                person
-                            </span>
-                            <span className="font-serif tracking-wide text-sm truncate">{user.name}</span>
+              <div className="flex-1 flex flex-col overflow-auto bg-[#050505]">
+                  {groups.map((group) => (
+                    <div key={group.label} className="flex border-b border-gray-800/50 last:border-0 relative">
+                      {/* Vertical Group Label */}
+                      <div className={`
+                          w-8 sm:w-10 flex-shrink-0 flex items-center justify-center
+                          ${group.color} bg-[#080808] border-r border-gray-800
+                          font-serif font-bold tracking-widest text-[10px] sm:text-xs select-none
+                          hover:bg-[#111] transition-colors
+                      `}>
+                          <div style={{ writingMode: 'vertical-rl', textOrientation: 'mixed' }} className="rotate-180 py-4 flex items-center justify-center gap-2">
+                              {group.label}
+                              <span className="text-[9px] opacity-60 font-sans tracking-normal">
+                                  {group.users.length > 0 ? `${group.users.length}` : ''}
+                              </span>
                           </div>
-                        </div>
-                        {COLUMNS.map((col) => {
-                          const status = user[col.key] as number;
-                          const config = STATUS_CONFIG[status] || STATUS_CONFIG[0];
+                      </div>
+                      
+                      {/* Users Column */}
+                      <div className="flex-1 flex flex-col min-w-0">
+                          {group.users.length === 0 && (
+                              <div className="px-4 py-8 text-center text-gray-600 font-serif text-sm italic">
+                                  NO PRISONERS ASSIGNED
+                              </div>
+                          )}
 
-                          return (
-                            <div key={col.key} className="px-1 py-1 text-center border-r border-gray-800/30 last:border-0 flex-1 min-w-[140px] flex items-center justify-center">
-                              <button
-                                onClick={() => handleStatusClick(user, col.key)}
-                                className={`
-                                  w-full h-[90%] rounded-sm flex items-center justify-center gap-2
-                                  transition-all duration-200 border
-                                  cursor-pointer active:scale-95 hover:brightness-110
-                                  ${config.color}
-                                `}
-                              >
-                                <span className="material-symbols-outlined text-[18px]">
-                                  {config.icon}
-                                </span>
-                                <span className="text-[9px] sm:text-[10px] font-bold hidden xl:inline-block font-serif tracking-tight truncate text-white drop-shadow-md">
-                                   {config.label}
-                                </span>
-                              </button>
+                          {group.users.map((user) => (
+                            <div
+                              key={user.id}
+                              className="flex flex-1 min-h-[50px] transition-colors duration-200 hover:bg-[#111] border-b border-gray-800/30 last:border-0"
+                            >
+                              <div className="px-4 py-1 font-medium text-white border-r border-gray-800/30 flex-[1.2] flex items-center min-w-[200px]">
+                                <div className="flex items-center gap-2 px-2 py-1.5 w-full text-left rounded text-gray-200 group">
+                                  <span className="material-symbols-outlined text-[18px] group-hover:rotate-12 transition-transform">
+                                      person
+                                  </span>
+                                  <span className="font-serif tracking-wide text-sm truncate">{user.name}</span>
+                                </div>
+                              </div>
+                              {COLUMNS.map((col) => {
+                                const status = user[col.key] as number;
+                                const config = STATUS_CONFIG[status] || STATUS_CONFIG[0];
+
+                                return (
+                                  <div key={col.key} className="px-1 py-1 text-center border-r border-gray-800/30 last:border-0 flex-1 min-w-[140px] flex items-center justify-center">
+                                    <button
+                                      onClick={() => handleStatusClick(user, col.key)}
+                                      className={`
+                                        w-full h-[90%] rounded-sm flex items-center justify-center gap-2
+                                        transition-all duration-200 border
+                                        cursor-pointer active:scale-95 hover:brightness-110
+                                        ${config.color}
+                                      `}
+                                    >
+                                      <span className="material-symbols-outlined text-[18px]">
+                                        {config.icon}
+                                      </span>
+                                      <span className="text-[9px] sm:text-[10px] font-bold hidden xl:inline-block font-serif tracking-tight truncate text-white drop-shadow-md">
+                                         {config.label}
+                                      </span>
+                                    </button>
+                                  </div>
+                                );
+                              })}
                             </div>
-                          );
-                        })}
+                          ))}
                       </div>
-                    );
-                  })}
-                  {/* Empty rows filler to keep grid look if few users (Flex spacer) */}
-                  {Array.from({ length: Math.max(0, 10 - users.length) }).map((_, i) => (
-                      <div key={`empty-${i}`} className="flex flex-1 min-h-[50px] pointer-events-none opacity-20">
-                          <div className="px-4 py-2 border-r border-gray-800/30 text-gray-400 font-serif text-xs flex-[1.2] min-w-[200px] flex items-center">EMPTY CELL</div>
-                          {COLUMNS.map(col => <div key={col.key} className="px-1 py-1 border-r border-gray-800/30 flex-1 min-w-[140px]"></div>)}
-                      </div>
+                    </div>
                   ))}
+
+                  {/* Empty rows filler */}
+                  <div className="flex-1 bg-[#050505]">
+                      {Array.from({ length: Math.max(0, 5 - users.length) }).map((_, i) => (
+                          <div key={`empty-${i}`} className="flex min-h-[50px] pointer-events-none opacity-10">
+                              <div className="w-8 sm:w-10 border-r border-gray-800"></div>
+                              <div className="px-4 py-2 border-r border-gray-800/30 text-gray-400 font-serif text-xs flex-[1.2] min-w-[200px] flex items-center">EMPTY CELL</div>
+                              {COLUMNS.map(col => <div key={col.key} className="px-1 py-1 border-r border-gray-800/30 flex-1 min-w-[140px]"></div>)}
+                          </div>
+                      ))}
+                  </div>
               </div>
             </div>
 
