@@ -5,6 +5,14 @@ export interface User {
   name: string;
   totalPages: number;
   updatedAt: Date;
+  // Status fields: 0=Not Started, 1=In Progress(Self), 2=In Progress(Waiting), 3=Completed
+  statusWriting: number;
+  statusCheck: number;
+  statusAbstract: number;
+  statusSlide: number;
+  // Optional fields for latest status
+  comment?: string;
+  likedNum?: number;
 }
 
 export interface ReadingLog {
@@ -42,6 +50,13 @@ export function validateAndConvertUser(doc: DocumentSnapshot): User {
     name: data.name,
     totalPages: data.totalPages,
     updatedAt: data.updatedAt.toDate(),
+    // Default to 0 if missing (backward compatibility)
+    statusWriting: typeof data.statusWriting === "number" ? data.statusWriting : 0,
+    statusCheck: typeof data.statusCheck === "number" ? data.statusCheck : 0,
+    statusAbstract: typeof data.statusAbstract === "number" ? data.statusAbstract : 0,
+    statusSlide: typeof data.statusSlide === "number" ? data.statusSlide : 0,
+    comment: data.comment,
+    likedNum: data.likedNum,
   };
 }
 
