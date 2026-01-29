@@ -53,12 +53,6 @@ export default async function ThesisProgress() {
           </div>
           <div className="flex gap-2">
             <Link
-              href="/status"
-              className="px-3 py-1.5 sm:px-4 sm:py-2 bg-purple-600 text-white rounded text-xs sm:text-sm font-bold shadow-sm active:bg-purple-700 hover:bg-purple-700"
-            >
-               状況一覧
-            </Link>
-            <Link
               href="/register"
               className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold shadow-sm active:bg-blue-700"
             >
