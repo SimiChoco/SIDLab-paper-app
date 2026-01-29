@@ -89,6 +89,10 @@ export async function createUser(name: string) {
     name,
     totalPages: 0,
     updatedAt: serverTimestamp(),
+    statusWriting: 0,
+    statusCheck: 0,
+    statusAbstract: 0,
+    statusSlide: 0,
   });
   return newUserRef.id;
 }
@@ -100,14 +104,7 @@ export async function getAllUsers() {
   const querySnapshot = await getDocs(q);
 
   return querySnapshot.docs.map((doc) => {
-    validateAndConvertUser(doc);
-
-    return {
-      id: doc.id,
-      name: doc.data().name,
-      comment: doc.data().comment,
-      likedNum: doc.data().likedNum,
-    };
+    return validateAndConvertUser(doc);
   });
 }
 
@@ -200,4 +197,13 @@ export async function addLiked(id: string) {
     console.log("Add liked failed: ", e);
     throw e;
   }
+}
+
+// Update user status
+export async function updateUserStatus(userId: string, field: string, value: number) {
+  const userRef = doc(db, USERS_COLLECTION, userId);
+  await updateDoc(userRef, {
+    [field]: value,
+    updatedAt: serverTimestamp(),
+  });
 }
