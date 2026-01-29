@@ -5,6 +5,7 @@ export interface User {
   name: string;
   totalPages: number;
   updatedAt: Date;
+  grade: "B4" | "M2";
   // Status fields: 0=Not Started, 1=In Progress(Self), 2=In Progress(Waiting), 3=Completed
   statusWriting: number;
   statusCheck: number;
@@ -55,6 +56,7 @@ export function validateAndConvertUser(doc: DocumentSnapshot): User {
     statusCheck: typeof data.statusCheck === "number" ? data.statusCheck : 0,
     statusAbstract: typeof data.statusAbstract === "number" ? data.statusAbstract : 0,
     statusSlide: typeof data.statusSlide === "number" ? data.statusSlide : 0,
+    grade: (data.grade === "B4" || data.grade === "M2") ? data.grade : "B4", // Default to B4
     comment: data.comment,
     likedNum: data.likedNum,
   };

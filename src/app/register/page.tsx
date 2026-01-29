@@ -8,6 +8,7 @@ import Link from "next/link";
 export default function RegisterPage() {
   const router = useRouter();
   const [name, setName] = useState("");
+  const [grade, setGrade] = useState<"B4" | "M2">("B4");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -17,7 +18,7 @@ export default function RegisterPage() {
     setError(null);
 
     try {
-      await createUser(name);
+      await createUser(name, grade);
       alert("登録しました！");
       window.location.href = "/";
     } catch (error: any) {
@@ -58,6 +59,36 @@ export default function RegisterPage() {
               className="input-field"
               placeholder="名前を入力"
             />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              学年
+            </label>
+            <div className="flex gap-4">
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="grade"
+                  value="B4"
+                  checked={grade === "B4"}
+                  onChange={(e) => setGrade(e.target.value as "B4")}
+                  className="radio radio-primary"
+                />
+                <span className="text-gray-900">学部4年 (B4)</span>
+              </label>
+              <label className="flex items-center gap-2 cursor-pointer">
+                <input
+                  type="radio"
+                  name="grade"
+                  value="M2"
+                  checked={grade === "M2"}
+                  onChange={(e) => setGrade(e.target.value as "M2")}
+                  className="radio radio-primary"
+                />
+                <span className="text-gray-900">修士2年 (M2)</span>
+              </label>
+            </div>
           </div>
 
           <button
