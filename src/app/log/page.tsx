@@ -5,19 +5,13 @@ import { useRouter } from "next/navigation";
 import { getAllUsers, addReadingLog } from "@/lib/db";
 import Link from "next/link";
 import InputComment from "../components/InputComment";
+import { User } from "@/lib/types";
 
 const MAX_COMMENT_LENGTH = 10;
 
-type UserOption = {
-  id: string;
-  name: string;
-  comment: string;
-  likedNum: number;
-};
-
 export default function LogPage() {
   const router = useRouter();
-  const [users, setUsers] = useState<UserOption[]>([]);
+  const [users, setUsers] = useState<User[]>([]);
   const [selectedUserId, setSelectedUserId] = useState("");
   const [pages, setPages] = useState("");
   const [comment, setComment] = useState("");
@@ -76,7 +70,7 @@ export default function LogPage() {
         selectedUserId,
         selectedUser.name,
         pageCount,
-        selectedUser.likedNum,
+        selectedUser.likedNum || 0,
         comment
       );
       router.push(`/log/success?pages=${pageCount}`);
