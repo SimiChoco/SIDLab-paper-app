@@ -152,7 +152,7 @@ const TimerCard = ({
   theme: TimerTheme;
   isFinished: boolean;
 }) => {
-  const containerRef = useRef<HTMLDivElement>(null);
+
   const measureRef = useRef<HTMLDivElement>(null);
   const [showSeconds, setShowSeconds] = useState(true);
   const lastWidthRef = useRef<number>(0);
@@ -174,13 +174,12 @@ const TimerCard = ({
     borderLeft: "border-solid border-[#c5a059]/30"
   };
 
-  const Component = isFinished ? Link : 'div';
+  const Component: any = isFinished ? Link : 'div';
   const props = isFinished ? { href: '/game-promo' } : {};
 
   return (
     <Component
       {...props}
-      ref={containerRef}
       className={`w-full max-w-[600px] mx-auto px-2 py-1.5 sm:px-5 sm:py-3 relative group ${styles.container} flex items-center justify-between gap-1 sm:gap-4 overflow-hidden transition-all duration-500 ${isFinished ? 'cursor-pointer hover:bg-red-50' : ''}`}
     >
       {/* Hidden measurement div - always contains seconds for width calculation */}
