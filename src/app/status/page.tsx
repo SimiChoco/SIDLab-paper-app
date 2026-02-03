@@ -119,6 +119,12 @@ export default function StatusPage() {
 
           <div>
               <Link
+                href="/game-promo"
+                className="mr-2 px-3 py-1.5 bg-gradient-to-r from-yellow-400 to-orange-500 text-white rounded hover:scale-105 transition-transform text-xs font-serif tracking-wide inline-flex items-center gap-1 font-bold shadow-sm"
+              >
+                論文書き終わった！
+              </Link>
+              <Link
                 href="/settings"
                 className="mr-2 px-3 py-1.5 bg-gray-900/80 border border-gray-700 text-gray-400 rounded hover:bg-gray-800 hover:text-white transition-all text-xs font-serif tracking-wide inline-flex items-center gap-1 group"
               >

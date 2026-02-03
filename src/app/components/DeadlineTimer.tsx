@@ -11,11 +11,15 @@ type TimeLeft = {
 
 type TimerTheme = 'paper' | 'dark';
 
-export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme }) {
+import Link from "next/link"; // Add Link import
+
+export default function DeadlineTimer({ theme = 'paper', customDeadline }: { theme?: TimerTheme; customDeadline?: Date }) {
   const [timeLeft, setTimeLeft] = useState<{
     undergrad: TimeLeft;
     master: TimeLeft;
   } | null>(null);
+  
+  // Removed global viewState, logic is now per-card based on timeLeft
 
   useEffect(() => {
     const calculateTimeLeft = () => {
@@ -25,13 +29,14 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
       const savedUndergrad = typeof window !== 'undefined' ? localStorage.getItem("deadline_undergrad") : null;
       const savedMaster = typeof window !== 'undefined' ? localStorage.getItem("deadline_master") : null;
 
-      // 2026-01-30 12:00 (Default)
-      const undergradDeadline = savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00");
-      // 2026-02-02 12:00 (Default)
-      const masterDeadline = savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00");
+      // 2026-01-30 12:00 (Default) or custom
+      const undergradDeadline = customDeadline || (savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00"));
+      // 2026-02-02 12:00 (Default) or custom
+      const masterDeadline = customDeadline || (savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00"));
 
       const getDiff = (deadline: Date): TimeLeft => {
         const diff = deadline.getTime() - now.getTime();
+        // If diff is 0 or less, we return all zeros.
         if (diff <= 0) return { days: 0, hours: 0, minutes: 0, seconds: 0 };
         
         const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -42,9 +47,12 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
         return { days, hours, minutes, seconds };
       };
 
+      const uDiff = getDiff(undergradDeadline);
+      const mDiff = getDiff(masterDeadline);
+
       setTimeLeft({
-        undergrad: getDiff(undergradDeadline),
-        master: getDiff(masterDeadline),
+        undergrad: uDiff,
+        master: mDiff,
       });
     };
 
@@ -52,7 +60,7 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
     const timer = setInterval(calculateTimeLeft, 1000);
 
     return () => clearInterval(timer);
-  }, []);
+  }, [customDeadline]); 
 
   if (!timeLeft) {
     return (
@@ -63,6 +71,9 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
     );
   }
 
+  // Helper to check if time is zero
+  const isFinished = (t: TimeLeft) => t.days === 0 && t.hours === 0 && t.minutes === 0 && t.seconds === 0;
+
   // Format date for display: "1/30 12:00"
   const formatDate = (date: Date) => {
     return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours().toString().padStart(2, '0')}:${date.getMinutes().toString().padStart(2, '0')}`;
@@ -72,8 +83,8 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
   const savedUndergrad = typeof window !== 'undefined' ? localStorage.getItem("deadline_undergrad") : null;
   const savedMaster = typeof window !== 'undefined' ? localStorage.getItem("deadline_master") : null;
   
-  const undergradDate = savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00");
-  const masterDate = savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00");
+  const undergradDate = customDeadline || (savedUndergrad ? new Date(savedUndergrad) : new Date("2026-01-30T12:00:00"));
+  const masterDate = customDeadline || (savedMaster ? new Date(savedMaster) : new Date("2026-02-02T12:00:00"));
 
   return (
     <div className="grid grid-cols-1 lg:grid-cols-2 gap-2 sm:gap-4 w-full">
@@ -83,6 +94,7 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
         data={timeLeft.undergrad} 
         icon="🎓"
         theme={theme}
+        isFinished={isFinished(timeLeft.undergrad)}
       />
       <TimerCard 
         title="修士論文締切" 
@@ -90,6 +102,7 @@ export default function DeadlineTimer({ theme = 'paper' }: { theme?: TimerTheme 
         data={timeLeft.master} 
         icon="📜"
         theme={theme}
+        isFinished={isFinished(timeLeft.master)}
       />
     </div>
   );
@@ -129,13 +142,15 @@ const TimerCard = ({
   date, 
   data, 
   icon,
-  theme
+  theme,
+  isFinished
 }: { 
   title: string; 
   date: string; 
   data: TimeLeft; 
   icon: string;
   theme: TimerTheme;
+  isFinished: boolean;
 }) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const measureRef = useRef<HTMLDivElement>(null);
@@ -159,38 +174,14 @@ const TimerCard = ({
     borderLeft: "border-solid border-[#c5a059]/30"
   };
 
-  useEffect(() => {
-    const checkOverflow = () => {
-      // Use the hidden measurement div to check if seconds would fit
-      if (measureRef.current && containerRef.current) {
-        const measureWidth = measureRef.current.scrollWidth;
-        const containerWidth = containerRef.current.clientWidth;
-        setShowSeconds(measureWidth <= containerWidth);
-      }
-    };
-
-    // Initial check
-    checkOverflow();
-    
-    // Only re-check on actual window resize
-    const handleResize = () => {
-      const currentWidth = window.innerWidth;
-      if (currentWidth !== lastWidthRef.current) {
-        lastWidthRef.current = currentWidth;
-        checkOverflow();
-      }
-    };
-
-    window.addEventListener('resize', handleResize);
-    lastWidthRef.current = window.innerWidth;
-
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
+  const Component = isFinished ? Link : 'div';
+  const props = isFinished ? { href: '/game-promo' } : {};
 
   return (
-    <div 
+    <Component
+      {...props}
       ref={containerRef}
-      className={`w-full max-w-[600px] mx-auto px-2 py-1.5 sm:px-5 sm:py-3 relative group ${styles.container} flex items-center justify-between gap-1 sm:gap-4 overflow-hidden transition-all duration-500`}
+      className={`w-full max-w-[600px] mx-auto px-2 py-1.5 sm:px-5 sm:py-3 relative group ${styles.container} flex items-center justify-between gap-1 sm:gap-4 overflow-hidden transition-all duration-500 ${isFinished ? 'cursor-pointer hover:bg-red-50' : ''}`}
     >
       {/* Hidden measurement div - always contains seconds for width calculation */}
       <div 
@@ -232,11 +223,16 @@ const TimerCard = ({
            <div className="absolute -inset-1 bg-gradient-to-r from-transparent via-[#c5a059]/10 to-transparent opacity-20 blur-sm pointer-events-none" />
            {/* Decorative flourish lines - Removed as requested */}
         </>
+      
+      {/* Background Pulse for finished state - Removed pulse to prevent flickering */}
+      {isFinished && (
+         <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-green-500 opacity-20 z-0"></div>
+      )}
 
       <div className="flex items-center gap-2 sm:gap-4 min-w-0 flex-1 z-10">
         {/* Icon hidden on mobile */}
-        <div className={`hidden sm:block text-2xl ${styles.icon}`}>
-          {icon}
+        <div className={`hidden sm:block text-2xl ${styles.icon} ${isFinished ? 'animate-bounce' : ''}`}>
+          {isFinished ? '🎉' : icon}
         </div>
         <div className="flex flex-col items-start min-w-0">
           <h3 
@@ -254,20 +250,29 @@ const TimerCard = ({
         </div>
       </div>
 
-      <div className={`flex items-center justify-center pl-2 sm:pl-4 border-l ${styles.borderLeft} ml-1 sm:ml-2 shrink-0 z-10`}>
-        <TimeUnit value={data.days} label="Day" theme={theme} />
-        <Separator theme={theme} />
-        <TimeUnit value={data.hours} label="Hour" theme={theme} />
-        <Separator theme={theme} />
-        <TimeUnit value={data.minutes} label="Min" theme={theme} />
-        {/* Seconds dynamically hidden when overflow detected */}
-        {showSeconds && (
+      <div className={`flex items-center justify-center pl-2 sm:pl-4 border-l ${styles.borderLeft} ml-1 sm:ml-2 shrink-0 z-10 min-w-[120px]`}>
+        {isFinished ? (
+          <div className="flex flex-col items-center justify-center animate-pulse">
+            <span className="text-red-600 font-bold text-xs sm:text-sm">CONGRATULATION!!</span>
+            <span className="text-[10px] sm:text-[10px] text-blue-600 underline font-bold whitespace-nowrap">Click Here!</span>
+          </div>
+        ) : (
           <>
+            <TimeUnit value={data.days} label="Day" theme={theme} />
             <Separator theme={theme} />
-            <TimeUnit value={data.seconds} label="Sec" theme={theme} />
+            <TimeUnit value={data.hours} label="Hour" theme={theme} />
+            <Separator theme={theme} />
+            <TimeUnit value={data.minutes} label="Min" theme={theme} />
+            {/* Seconds dynamically hidden when overflow detected */}
+            {showSeconds && (
+              <>
+                <Separator theme={theme} />
+                <TimeUnit value={data.seconds} label="Sec" theme={theme} />
+              </>
+            )}
           </>
         )}
       </div>
-    </div>
+    </Component>
   );
 };
