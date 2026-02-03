@@ -5,6 +5,7 @@ import { User } from "@/lib/types";
 import { getAllUsers, updateUserStatus } from "@/lib/db";
 import Link from "next/link";
 import DeadlineTimer from "../components/DeadlineTimer";
+import CelebrationOverlay from "../components/CelebrationOverlay";
 
 // Status configuration for Prison Theme
 const STATUS_CONFIG: Record<number, { label: string; color: string; icon: string }> = {
@@ -41,6 +42,8 @@ export default function StatusPage() {
   const [users, setUsers] = useState<User[]>([]);
   const [loading, setLoading] = useState(true);
   const [isB4First, setIsB4First] = useState(true);
+  const [showCelebration, setShowCelebration] = useState(false);
+  const [celebrationDismissed, setCelebrationDismissed] = useState(false);
 
   useEffect(() => {
     const fetchUsers = async () => {
@@ -54,7 +57,25 @@ export default function StatusPage() {
       }
     };
     fetchUsers();
+
   }, []);
+
+  // Check completion status
+  const allComplete = users.length > 0 && users.every(u => 
+    COLUMNS.every(col => (u[col.key] as number) === 3)
+  );
+
+  useEffect(() => {
+    if (allComplete) {
+      if (!celebrationDismissed) {
+        setShowCelebration(true);
+      }
+    } else {
+      // Reset dismissal if status goes back to incomplete so it can trigger again
+      setCelebrationDismissed(false);
+      setShowCelebration(false);
+    }
+  }, [allComplete, celebrationDismissed]);
 
   const b4Users = users.filter((u) => u.grade === "B4");
   const m2Users = users.filter((u) => u.grade === "M2");
@@ -269,6 +290,14 @@ export default function StatusPage() {
           </div>
         )}
       </div>
+
+      
+      {showCelebration && (
+        <CelebrationOverlay onClose={() => {
+          setShowCelebration(false);
+          setCelebrationDismissed(true);
+        }} />
+      )}
     </main>
   );
 }

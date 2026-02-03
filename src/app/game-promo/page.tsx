@@ -30,7 +30,7 @@ export default function GamePromoPage() {
           >
             <div className="w-16 h-16 relative rounded-full overflow-hidden border-2 border-yellow-400">
                <Image 
-                  src="/koki.jpg" 
+                  src="/koki.png" 
                   alt="Koki" 
                   fill
                   className="object-cover opacity-70"
@@ -57,7 +57,7 @@ export default function GamePromoPage() {
             <div className="absolute -top-20 -left-10 z-20 animate-bounce-slow">
               <div className="relative w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-yellow-400 overflow-hidden shadow-2xl transform hover:scale-125 transition duration-300 animate-spin-slow-reverse">
                 <Image 
-                  src="/koki.jpg" 
+                  src="/koki.png" 
                   alt="The Legend Koki" 
                   fill
                   className="object-cover"

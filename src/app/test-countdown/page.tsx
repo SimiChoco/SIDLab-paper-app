@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect } from "react";
 import DeadlineTimer from "../components/DeadlineTimer";
+import CelebrationOverlay from "../components/CelebrationOverlay";
 
 export default function TestCountdownPage() {
   const [testDate, setTestDate] = useState<Date | null>(null);
+  const [showCelebration, setShowCelebration] = useState(false);
 
   useEffect(() => {
     // Set deadline 10 seconds from now
@@ -30,6 +32,17 @@ export default function TestCountdownPage() {
       >
         Reload to Reset Timer
       </button>
+
+      <button 
+        onClick={() => setShowCelebration(true)}
+        className="mt-4 px-4 py-2 bg-gradient-to-r from-yellow-400 to-amber-600 text-white font-bold rounded shadow-lg hover:scale-105 transition-transform"
+      >
+        Test Celebration
+      </button>
+
+      {showCelebration && (
+        <CelebrationOverlay onClose={() => setShowCelebration(false)} />
+      )}
     </main>
   );
 }
