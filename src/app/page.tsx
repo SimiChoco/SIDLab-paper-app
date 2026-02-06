@@ -58,6 +58,7 @@ export default async function ThesisProgress() {
             >
                状況一覧
             </Link>
+
             <Link
               href="/register"
               className="px-3 py-1.5 sm:px-4 sm:py-2 bg-blue-600 text-white rounded text-xs sm:text-sm font-bold shadow-sm active:bg-blue-700"
